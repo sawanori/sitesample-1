@@ -3966,38 +3966,43 @@
         @media (max-width: 768px) {
             .craft-section {
                 padding: 60px 0;
+                min-height: 100vh;
             }
             
             .craft-grid-container {
                 grid-template-columns: repeat(8, 1fr);
-                grid-template-rows: repeat(10, min(80px, 10vw));
+                grid-template-rows: repeat(12, 1fr);
                 gap: min(10px, 1.2vw);
-                padding: 0 20px;
+                padding: 0 15px;
+                height: calc(100vh - 120px);
+                min-height: 600px;
             }
             
             /* 縦書きテキストを維持しつつ位置調整 */
             .craft-vertical-text {
                 grid-column: 1 / 4;
                 grid-row: 2 / 6;
-                transform: translateY(180px); /* 130px + 50px = 180px */
+                transform: translateY(180px); /* 元の位置に戻す */
+                z-index: 20;
             }
             
             .craft-vertical-text-right {
                 grid-column: 5 / 8;
                 grid-row: 3 / 7;
-                transform: translate(50px, 10px); /* X軸右に50px、Y軸下に50px追加（-40px + 50px = 10px） */
+                transform: translate(50px, 10px); /* 元の位置に戻す */
+                z-index: 20;
             }
             
             .craft-vertical-title,
             .craft-vertical-title-right {
-                font-size: clamp(26px, 5vw, 40px); /* フォントサイズを2段階大きく */
+                font-size: clamp(26px, 5vw, 40px); /* 元のサイズに戻す */
                 letter-spacing: 0.15em;
                 text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
             }
             
-            /* 画像の配置とサイズ調整 */
+            /* 画像を全体に広げる */
             .craft-image-1 {
-                grid-column: 1 / 5;
+                grid-column: 1 / 6;
                 grid-row: 1 / 5;
                 opacity: 0;
                 transform: translateY(30px);
@@ -4005,20 +4010,22 @@
             
             .craft-image-2 {
                 grid-column: 4 / 9;
-                grid-row: 3 / 7;
+                grid-row: 4 / 9;
                 opacity: 0;
                 transform: translateY(30px);
             }
             
             .craft-image-3 {
-                grid-column: 2 / 7;
-                grid-row: 6 / 10;
+                grid-column: 1 / 7;
+                grid-row: 8 / 13;
                 opacity: 0;
                 transform: translateY(30px);
             }
             
             .craft-img {
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+                height: 100%;
+                object-fit: cover;
             }
         }
         
