@@ -1265,6 +1265,20 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
         
+        /* デスクトップではスクロールコンテナを無効化 */
+        @media (min-width: 769px) {
+            .scroll-container {
+                position: static !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            html, body {
+                height: auto !important;
+                overflow: visible !important;
+            }
+        }
+        
         /* ビューポート単位の代替実装 */
         .mobile-bottom-nav-wrapper {
             position: fixed;
@@ -1278,30 +1292,41 @@
         
         /* モバイルでのビューポート高さ対応 */
         @media (max-width: 768px) {
+            /* スクロールコンテナの設定 */
+            html {
+                height: 100%;
+                overflow: hidden;
+            }
+            
+            body {
+                height: 100%;
+                overflow: hidden;
+                position: relative;
+            }
+            
+            /* メインコンテンツをスクロール可能にする */
+            .scroll-container {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 60px; /* ナビゲーションの高さ */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+            
+            /* ナビゲーションを完全に独立させる */
             .mobile-bottom-nav {
-                position: fixed !important;
-                /* bottomではなくtopで位置制御（JSで管理） */
-                bottom: auto !important;
-                /* トランジション無効化で安定化 */
+                position: absolute !important;
+                bottom: 0 !important;
+                left: 0;
+                right: 0;
+                top: auto !important;
                 transition: none !important;
                 -webkit-transition: none !important;
-                /* タッチ時のちらつき防止 */
-                -webkit-tap-highlight-color: transparent;
-                touch-action: manipulation;
-            }
-            
-            /* コンテンツエリアの高さ調整 */
-            body {
-                min-height: calc(var(--vh, 1vh) * 100);
-                padding-bottom: 80px; /* ナビゲーションの高さ分 */
-                /* スクロール時のバウンス無効化 */
-                overscroll-behavior-y: none;
-            }
-            
-            /* ページ全体の引っ張られ防止 */
-            html {
-                overscroll-behavior: none;
-                -webkit-overflow-scrolling: touch;
+                transform: none !important;
+                -webkit-transform: none !important;
             }
         }
         
@@ -5447,6 +5472,8 @@
     </style>
 </head>
 <body>
+    <!-- スクロールコンテナ（モバイル用） -->
+    <div class="scroll-container">
     <!-- ヘッダー -->
     <header class="header">
         <nav class="nav">
@@ -6406,34 +6433,16 @@
                 document.documentElement.style.setProperty('--vh', `${vh}px`);
             }
             
-            // モバイルナビゲーションの位置を固定
-            function fixMobileNavPosition() {
+            // スクロールコンテナの高さ調整
+            function adjustScrollContainer() {
+                if (window.innerWidth > 768) return;
+                
+                const scrollContainer = document.querySelector('.scroll-container');
                 const mobileNav = document.querySelector('.mobile-bottom-nav');
-                if (!mobileNav || window.innerWidth > 768) return;
                 
-                // Visual ViewportがあればそれをL使用、なければwindowを使用
-                const viewport = window.visualViewport || window;
-                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                
-                // ナビゲーションの高さを取得
-                const navHeight = mobileNav.offsetHeight;
-                
-                // ビューポートの実際の高さからナビゲーションの位置を計算
-                const viewportHeight = viewport.height || window.innerHeight;
-                const bottomPosition = viewportHeight - navHeight;
-                
-                // ナビゲーションを画面下部に固定（スクロール位置を考慮）
-                mobileNav.style.position = 'fixed';
-                mobileNav.style.top = `${bottomPosition}px`;
-                mobileNav.style.bottom = 'auto';
-                mobileNav.style.transform = 'none';
-                
-                // LINEブラウザの場合は追加の調整
-                if (isLineApp) {
-                    // タイミングをずらして再調整
-                    requestAnimationFrame(() => {
-                        mobileNav.style.top = `${bottomPosition}px`;
-                    });
+                if (scrollContainer && mobileNav) {
+                    const navHeight = mobileNav.offsetHeight || 60;
+                    scrollContainer.style.bottom = `${navHeight}px`;
                 }
             }
             
@@ -6466,39 +6475,21 @@
             
             // 初期設定
             setVH();
-            fixMobileNavPosition();
+            adjustScrollContainer();
             
             // ビューポートの変更を監視
             if (window.innerWidth <= 768) {
                 const debouncedSetVH = debounce(setVH, 100);
-                const throttledFixNav = throttle(fixMobileNavPosition, 50);
                 
                 // リサイズイベント
                 window.addEventListener('resize', () => {
                     debouncedSetVH();
-                    fixMobileNavPosition();
+                    adjustScrollContainer();
                 });
                 
                 window.addEventListener('orientationchange', () => {
                     debouncedSetVH();
-                    setTimeout(fixMobileNavPosition, 100);
-                });
-                
-                // スクロールイベント（スロットル処理）
-                window.addEventListener('scroll', throttledFixNav);
-                
-                // Visual Viewport API
-                if ('visualViewport' in window) {
-                    window.visualViewport.addEventListener('resize', () => {
-                        debouncedSetVH();
-                        fixMobileNavPosition();
-                    });
-                    window.visualViewport.addEventListener('scroll', throttledFixNav);
-                }
-                
-                // タッチ終了時にも位置を調整
-                document.addEventListener('touchend', () => {
-                    setTimeout(fixMobileNavPosition, 300);
+                    setTimeout(adjustScrollContainer, 100);
                 });
             }
             
@@ -7016,6 +7007,8 @@
             setInterval(changeSlideDesktop, 5000);
         }
     </script>
+    
+    </div><!-- スクロールコンテナ終了 -->
 
     <!-- モバイル用固定ボトムナビゲーション -->
     <div class="mobile-bottom-nav">
