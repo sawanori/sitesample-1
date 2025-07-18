@@ -1279,24 +1279,29 @@
         /* モバイルでのビューポート高さ対応 */
         @media (max-width: 768px) {
             .mobile-bottom-nav {
-                position: fixed;
-                bottom: 0;
+                position: fixed !important;
+                /* bottomではなくtopで位置制御（JSで管理） */
+                bottom: auto !important;
                 /* トランジション無効化で安定化 */
                 transition: none !important;
                 -webkit-transition: none !important;
-            }
-            
-            /* LINE内蔵ブラウザ専用 - sticky positionを試す */
-            html.line-browser .mobile-bottom-nav {
-                position: -webkit-sticky;
-                position: sticky;
-                bottom: 0;
+                /* タッチ時のちらつき防止 */
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
             }
             
             /* コンテンツエリアの高さ調整 */
             body {
                 min-height: calc(var(--vh, 1vh) * 100);
                 padding-bottom: 80px; /* ナビゲーションの高さ分 */
+                /* スクロール時のバウンス無効化 */
+                overscroll-behavior-y: none;
+            }
+            
+            /* ページ全体の引っ張られ防止 */
+            html {
+                overscroll-behavior: none;
+                -webkit-overflow-scrolling: touch;
             }
         }
         
@@ -6401,6 +6406,37 @@
                 document.documentElement.style.setProperty('--vh', `${vh}px`);
             }
             
+            // モバイルナビゲーションの位置を固定
+            function fixMobileNavPosition() {
+                const mobileNav = document.querySelector('.mobile-bottom-nav');
+                if (!mobileNav || window.innerWidth > 768) return;
+                
+                // Visual ViewportがあればそれをL使用、なければwindowを使用
+                const viewport = window.visualViewport || window;
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                
+                // ナビゲーションの高さを取得
+                const navHeight = mobileNav.offsetHeight;
+                
+                // ビューポートの実際の高さからナビゲーションの位置を計算
+                const viewportHeight = viewport.height || window.innerHeight;
+                const bottomPosition = viewportHeight - navHeight;
+                
+                // ナビゲーションを画面下部に固定（スクロール位置を考慮）
+                mobileNav.style.position = 'fixed';
+                mobileNav.style.top = `${bottomPosition}px`;
+                mobileNav.style.bottom = 'auto';
+                mobileNav.style.transform = 'none';
+                
+                // LINEブラウザの場合は追加の調整
+                if (isLineApp) {
+                    // タイミングをずらして再調整
+                    requestAnimationFrame(() => {
+                        mobileNav.style.top = `${bottomPosition}px`;
+                    });
+                }
+            }
+            
             // デバウンス関数
             function debounce(func, wait) {
                 let timeout;
@@ -6414,21 +6450,56 @@
                 };
             }
             
+            // スロットル関数（スクロール用）
+            function throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                }
+            }
+            
             // 初期設定
             setVH();
+            fixMobileNavPosition();
             
-            // ビューポートの変更を監視（デバウンス付き）
+            // ビューポートの変更を監視
             if (window.innerWidth <= 768) {
                 const debouncedSetVH = debounce(setVH, 100);
+                const throttledFixNav = throttle(fixMobileNavPosition, 50);
                 
-                // リサイズイベントの統一
-                window.addEventListener('resize', debouncedSetVH);
-                window.addEventListener('orientationchange', debouncedSetVH);
+                // リサイズイベント
+                window.addEventListener('resize', () => {
+                    debouncedSetVH();
+                    fixMobileNavPosition();
+                });
                 
-                // Visual Viewport APIがある場合のみ使用（重複を避ける）
+                window.addEventListener('orientationchange', () => {
+                    debouncedSetVH();
+                    setTimeout(fixMobileNavPosition, 100);
+                });
+                
+                // スクロールイベント（スロットル処理）
+                window.addEventListener('scroll', throttledFixNav);
+                
+                // Visual Viewport API
                 if ('visualViewport' in window) {
-                    window.visualViewport.addEventListener('resize', debouncedSetVH);
+                    window.visualViewport.addEventListener('resize', () => {
+                        debouncedSetVH();
+                        fixMobileNavPosition();
+                    });
+                    window.visualViewport.addEventListener('scroll', throttledFixNav);
                 }
+                
+                // タッチ終了時にも位置を調整
+                document.addEventListener('touchend', () => {
+                    setTimeout(fixMobileNavPosition, 300);
+                });
             }
             
             // 初期状態でナビゲーション非表示、ヒーロー用要素表示（PC・タブレットサイズのみ）
