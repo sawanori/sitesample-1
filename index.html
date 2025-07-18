@@ -4381,7 +4381,7 @@
             .feature-content {
                 opacity: 1 !important;
                 transform: translateY(0) !important;
-                background: rgba(26, 22, 17, 0.9);
+                background: rgba(26, 22, 17, 0.3);
                 padding: 30px 20px;
             }
             
@@ -4389,10 +4389,45 @@
                 opacity: 0.9 !important;
                 background: linear-gradient(
                     135deg,
-                    rgba(26, 22, 17, 0.95) 0%,
-                    rgba(26, 22, 17, 0.7) 50%,
-                    rgba(26, 22, 17, 0.3) 100%
+                    rgba(26, 22, 17, 0.4) 0%,
+                    rgba(26, 22, 17, 0.2) 50%,
+                    rgba(26, 22, 17, 0.1) 100%
                 ) !important;
+            }
+            
+            /* PageTOP ボタンのモバイル用スタイル */
+            .page-top-btn {
+                position: fixed !important;
+                bottom: 120px !important;
+                right: 20px !important;
+                left: auto !important;
+                transform: none !important;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                padding: 0;
+                background: var(--accent-gold);
+                border: none;
+                color: var(--primary-dark);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 90;
+            }
+            
+            .page-top-btn span {
+                display: none;
+            }
+            
+            .page-top-btn svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .page-top-btn:hover {
+                background: var(--accent-gold);
+                transform: scale(1.1);
             }
             
             .feature-title {
