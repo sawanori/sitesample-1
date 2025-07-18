@@ -1,5 +1,6 @@
 # Design Techniques from kushiyakihouichi.com/scene.html
 # Analyzed on: 2025-07-17
+# Updated: 2025-07-18 - Added shinmachi-adachi.com parallax techniques
 
 layout:
   structure:
@@ -72,6 +73,32 @@ animations:
     - type: "parallax"
       description: "背景画像の視差効果"
       speed: "0.5"
+    
+    - type: "advanced-parallax-scroll"
+      reference: "shinmachi-adachi.com"
+      description: "高度なパララックススクロール効果（季節の美味セクション）"
+      implementation:
+        javascript:
+          - "jQuery使用: $(window).on('scroll resize', updateOnScroll)"
+          - "要素の可視性比率を計算"
+          - "スクロール位置に基づく動的な変換"
+          - "モバイル/デスクトップで異なる挙動"
+        css_properties:
+          - "transform: scale(0.6〜1.0)"
+          - "transform: translateY(±10%)"
+          - "mask-position / -webkit-mask-position"
+          - "mask-size: 100% 100%"
+        trigger_points:
+          - "要素の高さの80%でトリガー"
+          - "画面内に入ってから出るまで連続的に変化"
+        performance:
+          - "requestAnimationFrameライクな処理"
+          - "最小限のDOM操作"
+          - "動的な変換計算"
+        unique_features:
+          - "交互に逆方向のパララックス効果"
+          - "マスク位置のアニメーション（-100%から0%）"
+          - "スケールとtranslateYの組み合わせ"
 
 image_treatment:
   hero_images:
@@ -180,3 +207,69 @@ implementation_tips:
   - "モバイルファーストアプローチ"
   - "プログレッシブエンハンスメント"
   - "パフォーマンスとデザインのバランス"
+
+# Additional Design Patterns from shinmachi-adachi.com
+# Analyzed on: 2025-07-18
+
+shinmachi_adachi_patterns:
+  overall_design:
+    concept:
+      - "極限までミニマルな日本の美意識"
+      - "7席限定による希少性の演出"
+      - "季節の移ろいと文化体験の融合"
+    
+    color_palette:
+      - "ニュートラルトーン中心"
+      - "背景: #FAFAFA / #FFFFFF"
+      - "テキスト: #333333 / #666666"
+      - "アクセント: 控えめな暖色系"
+    
+    typography:
+      - "日本語: 游明朝体/ヒラギノ明朝"
+      - "極細〜細字のウェイト使用"
+      - "十分な行間と余白"
+      - "縦書きの効果的な使用"
+  
+  layout_characteristics:
+    - "シングルページ縦スクロール"
+    - "フルスクリーン画像セクション"
+    - "テキストと画像の絶妙なバランス"
+    - "グリッドベースの写真配置"
+    - "大胆な余白の使用"
+  
+  unique_interactions:
+    seasonal_section:
+      - "「季節の美味で風習に触れるひとときを」"
+      - "スクロールに応じた画像の拡大縮小"
+      - "マスクエフェクトによる画像の切り抜き"
+      - "複数画像の異なる速度での動き"
+    
+    navigation:
+      - "固定ヘッダーなし（完全没入型）"
+      - "最小限のナビゲーション要素"
+      - "予約ボタンのみ常時表示"
+    
+    photo_galleries:
+      - "料理写真の芸術的な配置"
+      - "インタラクティブなギャラリー"
+      - "季節ごとのメニュー表現"
+  
+  mobile_optimization:
+    breakpoint: "767px"
+    adjustments:
+      - "パララックス効果の簡略化"
+      - "画像サイズの最適化"
+      - "タッチ操作への対応"
+      - "スクロール性能の確保"
+  
+  performance_techniques:
+    - "画像の遅延読み込み"
+    - "スクロールイベントの最適化"
+    - "CSS transformによるGPU活用"
+    - "最小限のJavaScript使用"
+  
+  cultural_elements:
+    - "日本の四季の表現"
+    - "伝統と現代の融合"
+    - "間（ま）の概念の活用"
+    - "素材へのこだわりの視覚化"
