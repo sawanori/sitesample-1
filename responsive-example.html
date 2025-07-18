@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>レスポンシブデザイン実装例 - kissa-elbe.com風</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <style>
+        /* モバイルファースト設計のベーススタイル */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* ヘッダーのレスポンシブ対応 */
+        .header-nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #fff;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* モバイルメニュー（デフォルト） */
+        .mobile-menu {
+            display: block;
+        }
+
+        .desktop-menu {
+            display: none;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .hamburger span {
+            display: block;
+            height: 2px;
+            background: #333;
+            transition: all 0.3s;
+        }
+
+        /* タブレット以上のスタイル */
+        @media (min-width: 768px) {
+            .mobile-menu {
+                display: none;
+            }
+
+            .desktop-menu {
+                display: flex;
+                gap: 2rem;
+            }
+
+            /* グリッドレイアウトの調整 */
+            .content-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            /* フォントサイズの調整 */
+            h1 {
+                font-size: 3rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* デスクトップのスタイル */
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .content-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            /* より大きな余白 */
+            .section {
+                padding: 5rem 0;
+            }
+
+            /* ホバーエフェクト */
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+        }
+
+        /* 画像のレスポンシブ対応 */
+        .responsive-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* モバイルでは小さい画像、デスクトップでは大きい画像 */
+        .hero-image {
+            height: 50vh;
+            object-fit: cover;
+        }
+
+        @media (min-width: 768px) {
+            .hero-image {
+                height: 70vh;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .hero-image {
+                height: 80vh;
+            }
+        }
+
+        /* フレックスボックスによるレスポンシブレイアウト */
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .flex-container {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        /* テキストのレスポンシブ調整 */
+        .responsive-text {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        @media (min-width: 768px) {
+            .responsive-text {
+                font-size: 1.125rem;
+                line-height: 1.8;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .responsive-text {
+                font-size: 1.25rem;
+                line-height: 2;
+            }
+        }
+
+        /* スペーシングのレスポンシブ調整 */
+        .section {
+            padding: 2rem 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .section {
+                padding: 4rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- レスポンシブヘッダー -->
+    <header class="header-nav">
+        <div class="container px-4 py-3">
+            <div class="flex-container">
+                <div class="logo">
+                    <h1 class="text-2xl font-bold">CAFE EXAMPLE</h1>
+                </div>
+                
+                <!-- モバイルメニュー -->
+                <div class="mobile-menu">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- デスクトップメニュー -->
+                <nav class="desktop-menu">
+                    <a href="#" class="hover:text-blue-600">HOME</a>
+                    <a href="#" class="hover:text-blue-600">MENU</a>
+                    <a href="#" class="hover:text-blue-600">ABOUT</a>
+                    <a href="#" class="hover:text-blue-600">CONTACT</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="mt-16">
+        <div class="relative">
+            <img src="./images/no1-0124.jpg" alt="カフェの雰囲気" class="responsive-image hero-image">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <div class="text-center text-white p-4">
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Welcome to Our Cafe</h2>
+                    <p class="responsive-text max-w-2xl mx-auto">心地よい空間で、特別なひとときを</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- コンテンツグリッド -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title text-center mb-8">Our Services</h2>
+            <div class="content-grid">
+                <!-- カード1 -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300">
+                    <img src="./images/no1-0125.jpg" alt="コーヒー" class="responsive-image h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">厳選コーヒー</h3>
+                        <p class="responsive-text text-gray-600">世界各地から厳選した豆を使用</p>
+                    </div>
+                </div>
+
+                <!-- カード2 -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300">
+                    <img src="./images/no1-0116.jpg" alt="スイーツ" class="responsive-image h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">手作りスイーツ</h3>
+                        <p class="responsive-text text-gray-600">毎日手作りの新鮮なスイーツ</p>
+                    </div>
+                </div>
+
+                <!-- カード3 -->
+                <div class="card bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300">
+                    <img src="./images/no1-0117.jpg" alt="空間" class="responsive-image h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2">落ち着いた空間</h3>
+                        <p class="responsive-text text-gray-600">ゆったりとした時間をお過ごしください</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 交互レイアウトセクション -->
+    <section class="section bg-gray-100">
+        <div class="container">
+            <div class="flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <img src="./images/no1-0118.jpg" alt="内装" class="responsive-image rounded-lg shadow-lg">
+                </div>
+                <div class="flex-1">
+                    <h2 class="section-title mb-4">こだわりの空間</h2>
+                    <p class="responsive-text text-gray-700 mb-4">
+                        木の温もりを感じる内装と、自然光が差し込む心地よい空間。
+                        都会の喧騒を忘れて、ゆったりとした時間をお過ごしいただけます。
+                    </p>
+                    <p class="responsive-text text-gray-700">
+                        Wi-Fi完備で、お仕事やお勉強にもご利用いただけます。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- メディアクエリの説明 -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title text-center mb-8">レスポンシブデザインのポイント</h2>
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h3 class="text-xl font-semibold mb-4">このページで使用している技術：</h3>
+                <ul class="list-disc list-inside space-y-2 responsive-text">
+                    <li><strong>モバイルファースト設計</strong>：基本スタイルをモバイル用に設定</li>
+                    <li><strong>メディアクエリ</strong>：768px（タブレット）と1024px（デスクトップ）でブレークポイント設定</li>
+                    <li><strong>フレックスボックス</strong>：ヘッダーナビゲーションの配置</li>
+                    <li><strong>CSSグリッド</strong>：カードレイアウトのレスポンシブ対応</li>
+                    <li><strong>相対単位</strong>：rem、vh、%を使用したスケーラブルなデザイン</li>
+                    <li><strong>画像の最適化</strong>：object-fitとレスポンシブな高さ設定</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
