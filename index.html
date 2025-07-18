@@ -1235,8 +1235,9 @@
         .mobile-bottom-nav {
             display: none;
             position: fixed;
-            bottom: 0;
+            bottom: 0 !important;
             left: 0;
+            right: 0;
             width: 100%;
             background: rgba(38, 38, 43, 0.98);
             backdrop-filter: blur(10px);
@@ -1245,17 +1246,69 @@
             padding: 8px 0;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
             /* Safari用の対策 */
-            -webkit-transform: translate3d(0, 0, 0);
-            transform: translate3d(0, 0, 0);
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
+            /* LINE内蔵ブラウザ対策 */
+            -webkit-position: fixed;
+            position: -webkit-fixed;
+            /* Chrome用の余白削除 */
+            margin: 0;
+            box-sizing: border-box;
         }
         
-        /* iOS Safari用のビューポート対策 */
-        @supports (-webkit-touch-callout: none) {
+        /* iOS/LINE用の固定位置調整 */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
             .mobile-bottom-nav {
-                bottom: env(safe-area-inset-bottom);
                 padding-bottom: calc(8px + env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Chrome/Android用の調整 */
+        @media (max-width: 768px) and (min-resolution: 2dppx) {
+            .mobile-bottom-nav {
+                bottom: -1px !important; /* Chromeのサブピクセル問題対策 */
+            }
+        }
+        
+        /* Chrome特有の余白除去 */
+        @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
+            .mobile-bottom-nav {
+                bottom: 0 !important;
+                position: fixed !important;
+            }
+        }
+        
+        /* ビューポート単位の代替実装 */
+        .mobile-bottom-nav-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: auto;
+            z-index: 999;
+        }
+        
+        /* LINE内蔵ブラウザ専用スタイル */
+        html.line-browser .mobile-bottom-nav {
+            position: -webkit-sticky !important;
+            position: sticky !important;
+            bottom: 0 !important;
+            transform: none !important;
+            -webkit-transform: none !important;
+        }
+        
+        /* LINE内蔵ブラウザでのbody調整 */
+        @media (max-width: 768px) {
+            html.line-browser body {
+                padding-bottom: 80px;
+                margin-bottom: 0;
+            }
+            
+            html.line-browser .mobile-bottom-nav {
+                margin-top: auto;
             }
         }
         
@@ -6345,21 +6398,59 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded');
             
+            // LINE内蔵ブラウザの検出
+            const isLineApp = /Line/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            // LINE内蔵ブラウザの場合、HTMLにクラスを追加
+            if (isLineApp) {
+                document.documentElement.classList.add('line-browser');
+            }
+            
             // iOS Safari用のビューポート高さ対策
             function setViewportHeight() {
                 const vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', `${vh}px`);
+                
+                // LINE内蔵ブラウザの場合、追加の対策
+                if (isLineApp) {
+                    const bottomNav = document.querySelector('.mobile-bottom-nav');
+                    if (bottomNav) {
+                        // 強制的に最下部に配置
+                        bottomNav.style.position = 'fixed';
+                        bottomNav.style.bottom = '0px';
+                        bottomNav.style.left = '0px';
+                        bottomNav.style.right = '0px';
+                        bottomNav.style.width = '100%';
+                        
+                        // タイマーで位置を再調整
+                        setTimeout(() => {
+                            bottomNav.style.bottom = '0px';
+                        }, 100);
+                    }
+                }
             }
             
             setViewportHeight();
             
             // ビューポートの変更を監視
             if (window.innerWidth <= 768) {
+                // スクロール時の挙動を改善
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    if (isLineApp) {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(() => {
+                            setViewportHeight();
+                        }, 100);
+                    }
+                });
+                
                 window.addEventListener('resize', setViewportHeight);
                 window.addEventListener('orientationchange', setViewportHeight);
                 
                 // Visual Viewport APIを使用（iOS Safari対応）
-                if ('visualViewport' in window) {
+                if ('visualViewport' in window && !isLineApp) {
                     window.visualViewport.addEventListener('resize', setViewportHeight);
                     window.visualViewport.addEventListener('scroll', setViewportHeight);
                 }
