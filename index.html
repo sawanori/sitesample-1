@@ -269,7 +269,7 @@
 
         /* ヒーロー */
         .hero {
-            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             position: relative;
             overflow: hidden;
             margin-top: 0;
@@ -1225,9 +1225,10 @@
             
             /* モバイルナビゲーションの位置固定 */
             .mobile-bottom-nav {
-                transform: translateZ(0);
-                -webkit-transform: translateZ(0);
-                will-change: transform;
+                /* will-changeとtransformを削除してレンダリング最適化 */
+                transform: none;
+                -webkit-transform: none;
+                will-change: auto;
             }
         }
         
@@ -1235,7 +1236,7 @@
         .mobile-bottom-nav {
             display: none;
             position: fixed;
-            bottom: 0 !important;
+            bottom: 0;
             left: 0;
             right: 0;
             width: 100%;
@@ -1245,14 +1246,8 @@
             z-index: 999;
             padding: 8px 0;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-            /* Safari用の対策 */
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            /* LINE内蔵ブラウザ対策 */
-            -webkit-position: fixed;
-            position: -webkit-fixed;
+            /* 重要: トランジションを無効化 */
+            transition: none !important;
             /* Chrome用の余白削除 */
             margin: 0;
             box-sizing: border-box;
@@ -1265,19 +1260,9 @@
             }
         }
         
-        /* Chrome/Android用の調整 */
-        @media (max-width: 768px) and (min-resolution: 2dppx) {
-            .mobile-bottom-nav {
-                bottom: -1px !important; /* Chromeのサブピクセル問題対策 */
-            }
-        }
-        
-        /* Chrome特有の余白除去 */
-        @media screen and (-webkit-min-device-pixel-ratio: 0) and (min-resolution: .001dpcm) {
-            .mobile-bottom-nav {
-                bottom: 0 !important;
-                position: fixed !important;
-            }
+        /* Safe Area対応 */
+        html, body {
+            padding-bottom: env(safe-area-inset-bottom);
         }
         
         /* ビューポート単位の代替実装 */
@@ -1291,24 +1276,27 @@
             z-index: 999;
         }
         
-        /* LINE内蔵ブラウザ専用スタイル */
-        html.line-browser .mobile-bottom-nav {
-            position: -webkit-sticky !important;
-            position: sticky !important;
-            bottom: 0 !important;
-            transform: none !important;
-            -webkit-transform: none !important;
-        }
-        
-        /* LINE内蔵ブラウザでのbody調整 */
+        /* モバイルでのビューポート高さ対応 */
         @media (max-width: 768px) {
-            html.line-browser body {
-                padding-bottom: 80px;
-                margin-bottom: 0;
+            .mobile-bottom-nav {
+                position: fixed;
+                bottom: 0;
+                /* トランジション無効化で安定化 */
+                transition: none !important;
+                -webkit-transition: none !important;
             }
             
+            /* LINE内蔵ブラウザ専用 - sticky positionを試す */
             html.line-browser .mobile-bottom-nav {
-                margin-top: auto;
+                position: -webkit-sticky;
+                position: sticky;
+                bottom: 0;
+            }
+            
+            /* コンテンツエリアの高さ調整 */
+            body {
+                min-height: calc(var(--vh, 1vh) * 100);
+                padding-bottom: 80px; /* ナビゲーションの高さ分 */
             }
         }
         
@@ -1452,7 +1440,7 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             z-index: 10000;
             pointer-events: none;
         }
@@ -2103,7 +2091,7 @@
             background: var(--primary-dark);
             position: relative;
             overflow: hidden;
-            min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
         }
 
         .dining-style-section::before {
@@ -2128,7 +2116,7 @@
             display: grid;
             grid-template-columns: 1fr 120px 1fr;
             grid-template-rows: 1fr;
-            min-height: calc(100vh - 80px);
+            min-height: calc(var(--vh, 1vh) * 100 - 80px);
         }
 
         .dining-section-title {
@@ -2281,7 +2269,7 @@
             z-index: 10;
             padding: 80px 60px;
             height: 100%;
-            min-height: calc(100vh - 200px);
+            min-height: calc(var(--vh, 1vh) * 100 - 200px);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -3908,7 +3896,7 @@
         @media (max-width: 1024px) {
             .craft-section {
                 padding: 40px 0;
-                min-height: 100vh;
+                min-height: calc(var(--vh, 1vh) * 100);
                 display: flex;
                 align-items: center;
             }
@@ -3918,7 +3906,7 @@
                 grid-template-rows: repeat(10, 1fr);
                 gap: 10px;
                 padding: 20px;
-                height: calc(100vh - 80px);
+                height: calc(var(--vh, 1vh) * 100 - 80px);
                 width: 100%;
             }
             
@@ -4552,7 +4540,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             z-index: 100000;
             opacity: 0;
             visibility: hidden;
@@ -4867,7 +4855,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
             z-index: 100000;
             opacity: 0;
             visibility: hidden;
@@ -6407,52 +6395,39 @@
                 document.documentElement.classList.add('line-browser');
             }
             
-            // iOS Safari用のビューポート高さ対策
-            function setViewportHeight() {
+            // ビューポート高さの安定化
+            function setVH() {
                 const vh = window.innerHeight * 0.01;
                 document.documentElement.style.setProperty('--vh', `${vh}px`);
-                
-                // LINE内蔵ブラウザの場合、追加の対策
-                if (isLineApp) {
-                    const bottomNav = document.querySelector('.mobile-bottom-nav');
-                    if (bottomNav) {
-                        // 強制的に最下部に配置
-                        bottomNav.style.position = 'fixed';
-                        bottomNav.style.bottom = '0px';
-                        bottomNav.style.left = '0px';
-                        bottomNav.style.right = '0px';
-                        bottomNav.style.width = '100%';
-                        
-                        // タイマーで位置を再調整
-                        setTimeout(() => {
-                            bottomNav.style.bottom = '0px';
-                        }, 100);
-                    }
-                }
             }
             
-            setViewportHeight();
+            // デバウンス関数
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
             
-            // ビューポートの変更を監視
+            // 初期設定
+            setVH();
+            
+            // ビューポートの変更を監視（デバウンス付き）
             if (window.innerWidth <= 768) {
-                // スクロール時の挙動を改善
-                let scrollTimeout;
-                window.addEventListener('scroll', () => {
-                    if (isLineApp) {
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(() => {
-                            setViewportHeight();
-                        }, 100);
-                    }
-                });
+                const debouncedSetVH = debounce(setVH, 100);
                 
-                window.addEventListener('resize', setViewportHeight);
-                window.addEventListener('orientationchange', setViewportHeight);
+                // リサイズイベントの統一
+                window.addEventListener('resize', debouncedSetVH);
+                window.addEventListener('orientationchange', debouncedSetVH);
                 
-                // Visual Viewport APIを使用（iOS Safari対応）
-                if ('visualViewport' in window && !isLineApp) {
-                    window.visualViewport.addEventListener('resize', setViewportHeight);
-                    window.visualViewport.addEventListener('scroll', setViewportHeight);
+                // Visual Viewport APIがある場合のみ使用（重複を避ける）
+                if ('visualViewport' in window) {
+                    window.visualViewport.addEventListener('resize', debouncedSetVH);
                 }
             }
             
