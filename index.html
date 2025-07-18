@@ -1209,6 +1209,26 @@
             height: 14px;
         }
 
+        /* スクロールバー補正用のスタイル */
+        body.menu-open {
+            overflow: hidden;
+            padding-right: var(--scrollbar-width, 0);
+        }
+        
+        /* モバイルではpadding補正を無効化 */
+        @media (max-width: 768px) {
+            body.menu-open {
+                padding-right: 0;
+            }
+            
+            /* モバイルナビゲーションの位置固定 */
+            .mobile-bottom-nav {
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
+                will-change: transform;
+            }
+        }
+        
         /* モバイル固定ボトムナビゲーション */
         .mobile-bottom-nav {
             display: none;
@@ -6321,6 +6341,27 @@
                 header.classList.remove('hero-hidden');
             }
             
+            // スクロールバーの幅を計算
+            function getScrollbarWidth() {
+                const outer = document.createElement('div');
+                outer.style.visibility = 'hidden';
+                outer.style.overflow = 'scroll';
+                outer.style.msOverflowStyle = 'scrollbar';
+                document.body.appendChild(outer);
+                
+                const inner = document.createElement('div');
+                outer.appendChild(inner);
+                
+                const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+                outer.parentNode.removeChild(outer);
+                
+                return scrollbarWidth;
+            }
+            
+            // CSS変数にスクロールバー幅を設定
+            const scrollbarWidth = getScrollbarWidth();
+            document.documentElement.style.setProperty('--scrollbar-width', scrollbarWidth + 'px');
+            
             // モバイルメニュー
             const menuToggle = document.getElementById('menuToggle');
             const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -6340,7 +6381,7 @@
         function closeMobileMenu() {
             if (menuToggle) menuToggle.classList.remove('active');
             mobileMenu.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.classList.remove('menu-open');
         }
 
         // デスクトップ用ハンバーガーメニュー
@@ -6348,7 +6389,11 @@
             menuToggle.addEventListener('click', () => {
                 menuToggle.classList.toggle('active');
                 mobileMenu.classList.toggle('active');
-                document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+                if (mobileMenu.classList.contains('active')) {
+                    document.body.classList.add('menu-open');
+                } else {
+                    document.body.classList.remove('menu-open');
+                }
             });
         }
 
@@ -6361,7 +6406,7 @@
                 console.log('Current mobileMenu classes:', mobileMenu.classList.toString());
                 mobileMenu.classList.add('active');
                 console.log('After adding active:', mobileMenu.classList.toString());
-                document.body.style.overflow = 'hidden';
+                document.body.classList.add('menu-open');
             });
         } else {
             console.log('Mobile menu button not found');
@@ -6549,7 +6594,7 @@
         window.openCoursesModal = function() {
             const modal = document.getElementById('coursesModal');
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('menu-open');
             
             // 初回表示時のアニメーション
             setTimeout(() => {
@@ -6567,7 +6612,7 @@
         window.closeCoursesModal = function() {
             const modal = document.getElementById('coursesModal');
             modal.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.classList.remove('menu-open');
             
             // スライドをリセット
             const slides = document.querySelectorAll('.course-slide');
@@ -6683,13 +6728,13 @@
         window.openDrinksModal = function() {
             const modal = document.getElementById('drinksModal');
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('menu-open');
         };
         
         window.closeDrinksModal = function() {
             const modal = document.getElementById('drinksModal');
             modal.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.classList.remove('menu-open');
         };
 
         // 席紹介スライダー機能
