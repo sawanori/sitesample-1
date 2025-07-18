@@ -3618,7 +3618,7 @@
             z-index: 10;
             position: relative;
             pointer-events: none;
-            transform: translateY(300px);
+            transform: translateY(250px); /* 300px - 50px = 250px */
         }
         
         .craft-vertical-title {
@@ -3656,7 +3656,7 @@
             color: #f5f5f3;
             line-height: 1.4;
             position: absolute;
-            top: -20%;
+            top: -70%; /* -20% - 50% = -70% */
             right: 50%;
             transform: translateX(50%);
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
@@ -3794,13 +3794,13 @@
             .craft-vertical-text {
                 grid-column: 2 / 5;
                 grid-row: 2 / 6;
-                transform: translateY(200px);
+                transform: translateY(150px); /* 200px - 50px = 150px */
             }
             
             .craft-vertical-text-right {
                 grid-column: 7 / 10;
                 grid-row: 3 / 7;
-                transform: translateY(150px);
+                transform: translateY(100px); /* 150px - 50px = 100px */
             }
             
             .craft-vertical-title,
@@ -3849,13 +3849,13 @@
             .craft-vertical-text {
                 grid-column: 1 / 4;
                 grid-row: 2 / 6;
-                transform: translateY(180px); /* 下方向に移動 */
+                transform: translateY(130px); /* 180px - 50px = 130px */
             }
             
             .craft-vertical-text-right {
                 grid-column: 5 / 8;
                 grid-row: 3 / 7;
-                transform: translate(50px, 10px); /* X軸右に50px、Y軸上に30px（40px - 30px = 10px） */
+                transform: translate(50px, -40px); /* X軸右に50px、Y軸上に50px追加（10px - 50px = -40px） */
             }
             
             .craft-vertical-title,
@@ -3909,13 +3909,13 @@
             .craft-vertical-text {
                 grid-column: 1 / 3;
                 grid-row: 2 / 6;
-                transform: translateY(120px); /* 下方向に移動 */
+                transform: translateY(70px); /* 120px - 50px = 70px */
             }
             
             .craft-vertical-text-right {
                 grid-column: 4 / 6;
                 grid-row: 4 / 8;
-                transform: translate(50px, -10px); /* X軸右に50px、Y軸上に30px（20px - 30px = -10px） */
+                transform: translate(50px, -60px); /* X軸右に50px、Y軸上に50px追加（-10px - 50px = -60px） */
             }
             
             .craft-vertical-title,
@@ -5488,11 +5488,11 @@
     <section class="craft-section" id="craft">
         <div class="craft-grid-container">
             <div class="craft-vertical-text">
-                <h2 class="craft-vertical-title jp-title fade-up">空間から接客までお客様をおもてなしにこだわる</h2>
+                <h2 class="craft-vertical-title jp-title fade-up">おもてなしの空間</h2>
             </div>
             
             <div class="craft-vertical-text-right">
-                <h2 class="craft-vertical-title-right jp-title fade-up">こだわり続けた厳選した新鮮な国産牛もつと野菜</h2>
+                <h2 class="craft-vertical-title-right jp-title fade-up">厳選素材へのこだわり</h2>
             </div>
             
             <div class="craft-image-1">
