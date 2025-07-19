@@ -1246,11 +1246,14 @@
             z-index: 999;
             padding: 8px 0;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-            /* 重要: トランジションを無効化 */
-            transition: none !important;
-            /* Chrome用の余白削除 */
+            transition: transform 0.3s ease-out;
+            transform: translateY(0);
             margin: 0;
             box-sizing: border-box;
+        }
+        
+        .mobile-bottom-nav.hidden {
+            transform: translateY(100%);
         }
         
         /* iOS/LINE用の固定位置調整 */
@@ -6581,6 +6584,41 @@
                 craftObserver.observe(image);
             });
             
+            // モバイルボトムナビゲーションのスクロール制御
+            if (window.innerWidth <= 768) {
+                let lastScrollTop = 0;
+                let scrollTimeout;
+                const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
+                const scrollContainer = document.querySelector('.scroll-container');
+                
+                if (scrollContainer && mobileBottomNav) {
+                    scrollContainer.addEventListener('scroll', function() {
+                        clearTimeout(scrollTimeout);
+                        
+                        const currentScrollTop = scrollContainer.scrollTop;
+                        const scrollDiff = currentScrollTop - lastScrollTop;
+                        
+                        // スクロールが止まったことを検知するためのタイムアウト
+                        scrollTimeout = setTimeout(() => {
+                            // スクロールが止まったら、位置に関係なくナビを表示
+                            mobileBottomNav.classList.remove('hidden');
+                        }, 150);
+                        
+                        if (Math.abs(scrollDiff) > 5) { // 5px以上の移動を検知
+                            if (scrollDiff > 0 && currentScrollTop > 100) {
+                                // 下にスクロール かつ 100px以上スクロールしている場合は非表示
+                                mobileBottomNav.classList.add('hidden');
+                            } else if (scrollDiff < 0) {
+                                // 上にスクロールしたら表示
+                                mobileBottomNav.classList.remove('hidden');
+                            }
+                        }
+                        
+                        lastScrollTop = currentScrollTop;
+                    });
+                }
+            }
+            
             // ビューポート高さの安定化
             function setVH() {
                 const vh = window.innerHeight * 0.01;
@@ -6595,8 +6633,13 @@
                 const mobileNav = document.querySelector('.mobile-bottom-nav');
                 
                 if (scrollContainer && mobileNav) {
-                    const navHeight = mobileNav.offsetHeight || 60;
-                    scrollContainer.style.bottom = `${navHeight}px`;
+                    // ナビゲーションが隠れている時は余白を0に
+                    if (mobileNav.classList.contains('hidden')) {
+                        scrollContainer.style.bottom = '0';
+                    } else {
+                        const navHeight = mobileNav.offsetHeight || 60;
+                        scrollContainer.style.bottom = `${navHeight}px`;
+                    }
                 }
             }
             
