@@ -3624,6 +3624,10 @@
             pointer-events: none;
         }
 
+        .parallax-bg-wrapper {
+            --overlay-opacity: 0.4;
+        }
+        
         .parallax-bg-wrapper::after {
             content: '';
             position: absolute;
@@ -3631,7 +3635,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, var(--overlay-opacity));
+            transition: background 0.5s ease-out;
+        }
+        
+        .parallax-bg-wrapper.fade-out {
+            opacity: 1; /* 画像自体は表示したまま */
+        }
+        
+        .parallax-bg-wrapper.fade-out::after {
+            background: rgba(0, 0, 0, 1); /* 完全に黒く */
         }
 
         /* 冒頭メッセージパララックスセクション（透明な窓） */
@@ -6614,27 +6627,32 @@
                     
                     // セクションが画面の上半分を超えたらフェードアウト開始
                     if (sectionTop < windowHeight * 0.5) {
-                        // セクションの下端が画面の上端に近づくにつれて透明度を下げる
+                        // セクションの下端が画面の上端に近づくにつれて黒くフェードアウト
                         const fadeStart = windowHeight * 0.5;
-                        const fadeEnd = -sectionHeight;
+                        const fadeEnd = -sectionHeight * 0.5;
                         const fadeRange = fadeStart - fadeEnd;
                         const currentPosition = sectionTop - fadeEnd;
-                        let opacity = currentPosition / fadeRange;
+                        let fadeProgress = 1 - (currentPosition / fadeRange);
                         
-                        // 透明度を0から1の範囲に制限
-                        opacity = Math.max(0, Math.min(1, opacity));
+                        // フェード進行度を0から1の範囲に制限
+                        fadeProgress = Math.max(0, Math.min(1, fadeProgress));
                         
-                        parallaxBg.style.opacity = opacity;
+                        // 黒いオーバーレイの透明度を調整
+                        const blackOverlay = parallaxBg.querySelector('::after') || parallaxBg;
+                        const overlayOpacity = 0.4 + (0.6 * fadeProgress); // 0.4から1.0まで
                         
-                        // 完全に透明になったらfade-outクラスを追加
-                        if (opacity === 0) {
+                        // CSSカスタムプロパティまたはスタイルで制御
+                        parallaxBg.style.setProperty('--overlay-opacity', overlayOpacity);
+                        
+                        // 完全に黒くなったらfade-outクラスを追加
+                        if (fadeProgress >= 0.95) {
                             parallaxBg.classList.add('fade-out');
                         } else {
                             parallaxBg.classList.remove('fade-out');
                         }
                     } else {
-                        // セクションが画面の下半分にある場合は完全に表示
-                        parallaxBg.style.opacity = 1;
+                        // セクションが画面の下半分にある場合は通常表示
+                        parallaxBg.style.setProperty('--overlay-opacity', 0.4);
                         parallaxBg.classList.remove('fade-out');
                     }
                 }
