@@ -1237,6 +1237,7 @@
             display: none;
             position: fixed;
             bottom: 0;
+            bottom: env(safe-area-inset-bottom, 0);
             left: 0;
             right: 0;
             width: 100%;
@@ -1248,6 +1249,12 @@
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
             margin: 0;
             box-sizing: border-box;
+            transition: transform 0.3s ease-out;
+            transform: translateY(0);
+        }
+        
+        .mobile-bottom-nav.nav-hidden {
+            transform: translateY(calc(100% + env(safe-area-inset-bottom, 0)));
         }
         
         
@@ -1318,10 +1325,16 @@
             /* ナビゲーションを完全に独立させる */
             .mobile-bottom-nav {
                 position: fixed !important;
-                bottom: 0 !important;
+                bottom: env(safe-area-inset-bottom, 0) !important;
                 left: 0;
                 right: 0;
                 top: auto !important;
+                transition: transform 0.3s ease-out !important;
+                transform: translateY(0) !important;
+            }
+            
+            .mobile-bottom-nav.nav-hidden {
+                transform: translateY(calc(100% + env(safe-area-inset-bottom, 0))) !important;
             }
             
         }
@@ -6577,42 +6590,41 @@
                 craftObserver.observe(image);
             });
             
-            // モバイルナビゲーションの動的位置調整
+            // モバイルナビゲーションのスクロール制御
             if (window.innerWidth <= 768) {
                 const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
                 const scrollContainer = document.querySelector('.scroll-container');
                 let lastScrollTop = 0;
-                let viewportHeight = window.innerHeight;
+                let isScrolling = false;
                 
-                // ビューポート高さの変化を監視
-                function updateNavPosition() {
-                    const currentViewportHeight = window.innerHeight;
-                    const viewportDiff = viewportHeight - currentViewportHeight;
-                    
-                    if (mobileBottomNav) {
-                        // ビューポートが小さくなった（アドレスバーが表示された）
-                        if (viewportDiff > 0) {
-                            mobileBottomNav.style.bottom = `${viewportDiff}px`;
-                        } else {
-                            mobileBottomNav.style.bottom = '0px';
+                if (scrollContainer && mobileBottomNav) {
+                    scrollContainer.addEventListener('scroll', function() {
+                        const currentScrollTop = scrollContainer.scrollTop;
+                        const scrollDiff = currentScrollTop - lastScrollTop;
+                        
+                        // スクロール方向を検知
+                        if (Math.abs(scrollDiff) > 10) {
+                            if (scrollDiff > 0 && currentScrollTop > 100) {
+                                // 下にスクロール
+                                mobileBottomNav.classList.add('nav-hidden');
+                                scrollContainer.style.bottom = '0';
+                            } else if (scrollDiff < 0) {
+                                // 上にスクロール
+                                mobileBottomNav.classList.remove('nav-hidden');
+                                scrollContainer.style.bottom = '60px';
+                            }
                         }
-                    }
-                    
-                    viewportHeight = currentViewportHeight;
-                }
-                
-                // スクロールイベントでビューポート高さをチェック
-                if (scrollContainer) {
-                    scrollContainer.addEventListener('scroll', () => {
-                        updateNavPosition();
+                        
+                        lastScrollTop = currentScrollTop;
+                        
+                        // スクロールが止まったら表示
+                        clearTimeout(isScrolling);
+                        isScrolling = setTimeout(() => {
+                            mobileBottomNav.classList.remove('nav-hidden');
+                            scrollContainer.style.bottom = '60px';
+                        }, 200);
                     });
                 }
-                
-                // リサイズイベントでも監視
-                window.addEventListener('resize', updateNavPosition);
-                
-                // 初期位置設定
-                updateNavPosition();
             }
             
             // ビューポート高さの安定化
