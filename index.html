@@ -1252,9 +1252,6 @@
             box-sizing: border-box;
         }
         
-        .mobile-bottom-nav.hidden {
-            transform: translateY(100%);
-        }
         
         /* iOS/LINE用の固定位置調整 */
         @supports (padding-bottom: env(safe-area-inset-bottom)) {
@@ -1333,10 +1330,6 @@
                 -webkit-transform: translateY(0) !important;
             }
             
-            .mobile-bottom-nav.hidden {
-                transform: translateY(100%) !important;
-                -webkit-transform: translateY(100%) !important;
-            }
         }
         
         .bottom-nav-item {
@@ -6590,42 +6583,34 @@
                 craftObserver.observe(image);
             });
             
-            // モバイルボトムナビゲーションのスクロール制御
+            // モバイルでブラウザのアドレスバーを自動的に隠す
             if (window.innerWidth <= 768) {
-                let lastScrollTop = 0;
-                let scrollTimeout;
-                const mobileBottomNav = document.querySelector('.mobile-bottom-nav');
-                const scrollContainer = document.querySelector('.scroll-container');
+                // 初期ロード時に少しスクロールしてアドレスバーを隠す
+                setTimeout(() => {
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    if (scrollContainer && scrollContainer.scrollTop === 0) {
+                        scrollContainer.scrollTo(0, 1);
+                    }
+                }, 100);
                 
-                if (scrollContainer && mobileBottomNav) {
-                    scrollContainer.addEventListener('scroll', function() {
-                        clearTimeout(scrollTimeout);
-                        
-                        const currentScrollTop = scrollContainer.scrollTop;
-                        const scrollDiff = currentScrollTop - lastScrollTop;
-                        
-                        // スクロールが止まったことを検知するためのタイムアウト
-                        scrollTimeout = setTimeout(() => {
-                            // スクロールが止まったら、位置に関係なくナビを表示
-                            mobileBottomNav.classList.remove('hidden');
-                            scrollContainer.style.bottom = '60px';
-                        }, 150);
-                        
-                        if (Math.abs(scrollDiff) > 5) { // 5px以上の移動を検知
-                            if (scrollDiff > 0 && currentScrollTop > 100) {
-                                // 下にスクロール かつ 100px以上スクロールしている場合は非表示
-                                mobileBottomNav.classList.add('hidden');
-                                scrollContainer.style.bottom = '0';
-                            } else if (scrollDiff < 0) {
-                                // 上にスクロールしたら表示
-                                mobileBottomNav.classList.remove('hidden');
-                                scrollContainer.style.bottom = '60px';
-                            }
+                // タッチ開始時の処理
+                let touchStartY = 0;
+                document.addEventListener('touchstart', (e) => {
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+                
+                // タッチ移動時の処理
+                document.addEventListener('touchmove', (e) => {
+                    const touchY = e.touches[0].clientY;
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    
+                    if (scrollContainer) {
+                        // 下にスワイプした時、スクロール位置が0の場合は1pxスクロール
+                        if (touchY > touchStartY && scrollContainer.scrollTop === 0) {
+                            scrollContainer.scrollTo(0, 1);
                         }
-                        
-                        lastScrollTop = currentScrollTop;
-                    });
-                }
+                    }
+                }, { passive: true });
             }
             
             // ビューポート高さの安定化
