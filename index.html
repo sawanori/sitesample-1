@@ -6650,13 +6650,14 @@
                 const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
                 const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
                 
-                // 「当店の４つのこだわり」セクションを基準に背景を切り替え
-                if (featuresSection && parallaxBg1 && parallaxBg2) {
-                    const featuresRect = featuresSection.getBoundingClientRect();
-                    const featuresTop = featuresRect.top;
+                // 最初のパララックスセクションを基準に背景を切り替え
+                const firstParallaxSection = document.querySelector('.intro-parallax-section:not(.intro-parallax-2)');
+                if (firstParallaxSection && parallaxBg1 && parallaxBg2) {
+                    const firstParallaxRect = firstParallaxSection.getBoundingClientRect();
+                    const firstParallaxBottom = firstParallaxRect.bottom;
                     
-                    // featuresセクションの上端が画面に入ったら即座に背景切り替え
-                    if (featuresTop < window.innerHeight) {
+                    // 最初のパララックスセクションの下端が画面の上から25%の位置を過ぎたら背景切り替え
+                    if (firstParallaxBottom < window.innerHeight * 0.75) {
                         // 2番目の背景を即座に表示
                         parallaxBg2.style.opacity = '1';
                         parallaxBg1.style.opacity = '0';
