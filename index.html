@@ -5527,8 +5527,12 @@
             <a href="#" class="logo jp-title">木村屋本店<small style="color: white; font-size: 0.7em; margin-left: 0.3em; font-weight: 300;">サンプル店</small></a>
             <ul class="nav-menu">
                 <li><a href="#home">ホーム</a></li>
-                <li><a href="#room">お品書き</a></li>
                 <li><a href="#craft">こだわり</a></li>
+                <li><a href="#features">特徴</a></li>
+                <li><a href="#space">本場九州仕込み</a></li>
+                <li><a href="#room">お品書き</a></li>
+                <li><a href="#dining-style">楽しみ方</a></li>
+                <li><a href="#seats">お席</a></li>
                 <li><a href="#gallery">ギャラリー</a></li>
                 <li><a href="#info">店舗情報</a></li>
             </ul>
@@ -5552,12 +5556,14 @@
             </button>
             <ul class="mobile-nav">
                 <li><a href="#home" class="mobile-link">ホーム</a></li>
-                <li><a href="#news" class="mobile-link">新着情報</a></li>
-                <li><a href="#features" class="mobile-link">特徴</a></li>
-                <li><a href="#room" class="mobile-link">お品書き</a></li>
                 <li><a href="#craft" class="mobile-link">こだわり</a></li>
-                <li><a href="#space" class="mobile-link">空間</a></li>
+                <li><a href="#features" class="mobile-link">特徴</a></li>
+                <li><a href="#space" class="mobile-link">本場九州仕込み</a></li>
+                <li><a href="#room" class="mobile-link">お品書き</a></li>
+                <li><a href="#dining-style" class="mobile-link">楽しみ方</a></li>
+                <li><a href="#seats" class="mobile-link">お席</a></li>
                 <li><a href="#gallery" class="mobile-link">ギャラリー</a></li>
+                <li><a href="#news" class="mobile-link">新着情報</a></li>
                 <li><a href="#info" class="mobile-link">店舗案内</a></li>
             </ul>
         </div>
@@ -5569,8 +5575,8 @@
     <!-- ヒーロー用縦書きナビゲーション -->
     <nav class="hero-nav-menu" id="heroNavMenu">
         <a href="#home">ホーム</a>
-        <a href="#room">お品書き</a>
         <a href="#craft">こだわり</a>
+        <a href="#room">お品書き</a>
         <a href="#gallery">ギャラリー</a>
         <a href="#info">店舗情報</a>
     </nav>
@@ -6467,7 +6473,7 @@
         </div>
         <div class="footer-bottom">
             <p class="copyright">&copy; 2024 木村屋本店<small style="color: rgba(255,255,255,0.8); font-size: 0.85em; margin-left: 0.3em;">サンプル店</small>. All rights reserved.</p>
-            <button class="page-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <button class="page-top-btn" onclick="scrollToTop()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M18 15l-6-6-6 6"/>
                 </svg>
@@ -6477,6 +6483,26 @@
     </footer>
 
     <script>
+        // トップページへスクロールする関数
+        function scrollToTop() {
+            if (window.innerWidth <= 768) {
+                // スマートフォンの場合はscroll-containerをスクロール
+                const scrollContainer = document.querySelector('.scroll-container');
+                if (scrollContainer) {
+                    scrollContainer.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            } else {
+                // デスクトップの場合は通常のスクロール
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM Content Loaded');
             
