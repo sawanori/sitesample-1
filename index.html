@@ -7,7 +7,7 @@
     <link href="./dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500&family=Shippori+Mincho:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400;500&family=Shippori+Mincho:wght@400;500;600&family=Yuji+Syuku&family=Yuji+Boku&family=Yuji+Mai&family=Hachi+Maru+Pop&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-dark: #26262b;
@@ -37,6 +37,36 @@
 
         .jp-title {
             font-family: 'Shippori Mincho', serif;
+        }
+        
+        /* 上品な筆文字スタイル */
+        .brush-title {
+            font-family: 'Yuji Syuku', serif;
+            font-weight: 400;
+            letter-spacing: 0.08em;
+        }
+        
+        /* 力強い筆文字スタイル */
+        .strong-brush {
+            font-family: 'Yuji Boku', serif;
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 優雅でインパクトのある筆文字スタイル */
+        .impact-brush {
+            font-family: 'Yuji Mai', serif;
+            font-weight: 400;
+            letter-spacing: 0.12em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.35);
+        }
+        
+        /* 親しみやすい筆文字スタイル */
+        .pop-brush {
+            font-family: 'Hachi Maru Pop', cursive;
+            font-weight: 400;
+            letter-spacing: 0.06em;
         }
 
         html {
@@ -419,10 +449,11 @@
 
         .hero-title {
             font-size: clamp(36px, 6vw, 72px);
-            font-weight: 200;
+            font-weight: 400;
             letter-spacing: 12px;
             margin-bottom: 24px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-family: 'Yuji Mai', 'Yuji Boku', serif;
         }
         
         .hero-logo {
@@ -5647,11 +5678,11 @@
     <section class="craft-section" id="craft">
         <div class="craft-grid-container">
             <div class="craft-vertical-text">
-                <h2 class="craft-vertical-title jp-title fade-up">ちょっとは九州じゃない料理</h2>
+                <h2 class="craft-vertical-title strong-brush fade-up">ちょっとは九州じゃない料理</h2>
             </div>
             
             <div class="craft-vertical-text-right">
-                <h2 class="craft-vertical-title-right jp-title fade-up">九州料理と美味い酒</h2>
+                <h2 class="craft-vertical-title-right strong-brush fade-up">九州料理と美味い酒</h2>
             </div>
             
             <div class="craft-image-1">
@@ -5681,7 +5712,7 @@
                 <img src="./images/no1-0241.jpg" alt="こだわりの食材" class="feature-image">
                 <div class="feature-content">
                     <div class="feature-number">01</div>
-                    <h3 class="feature-title jp-title">当店名物！<br>こだわりの博多もつ鍋</h3>
+                    <h3 class="feature-title brush-title">当店名物！<br>こだわりの博多もつ鍋</h3>
                     <p class="feature-description">
                         厳選した国産牛もつと秘伝の特製スープで作る本場博多の味。
                         味噌・醤油・塩・辛味噌の4種類から選べ、〆のちゃんぽん麺や雑炊まで堪能できます。
@@ -5693,7 +5724,7 @@
             <!-- カード2: メッセージカード (モバイルでは1番目) -->
             <div class="feature-card text-overlay order-mobile-1">
                 <div class="feature-content">
-                    <h3 class="feature-title jp-title fade-up">当店の４つのこだわり</h3>
+                    <h3 class="feature-title strong-brush fade-up">当店の４つのこだわり</h3>
                     <p class="feature-description">
                         もつ鍋専門店としての伝統の味と受け継がれた<br>
                         本場九州仕込み博多もつ鍋と当店のこだわりで<br>
@@ -5813,7 +5844,7 @@
     <!-- お品書き -->
     <section class="room-section" id="room">
         <div class="room-container">
-            <h2 class="section-title jp-title fade-up">お品書き</h2>
+            <h2 class="section-title strong-brush fade-up">お品書き</h2>
             <p class="section-subtitle fade-up">心安らぐ空間で、特別なひとときを</p>
             
             <div class="menu-grid">
@@ -5982,7 +6013,7 @@
     <!-- 宴会or一人飲みセクション -->
     <section class="dining-style-section" id="dining-style">
         <div class="dining-style-container">
-            <h2 class="dining-section-title fade-up">選べる当店の楽しみ方！</h2>
+            <h2 class="dining-section-title strong-brush fade-up">選べる当店の楽しみ方！</h2>
             <div class="dining-style-grid">
                 <!-- 左カラム：宴会 -->
                 <div class="dining-column dining-party">
@@ -6368,7 +6399,7 @@
     <!-- 新着情報 -->
     <section class="news-section" id="news">
         <div class="news-container">
-            <h2 class="section-title jp-title fade-up">新着情報</h2>
+            <h2 class="section-title brush-title fade-up">新着情報</h2>
             
             <div class="news-grid">
                 <article class="news-item fade-up">
@@ -6402,7 +6433,7 @@
     <!-- 店舗情報 -->
     <section class="info-section" id="info">
         <div class="container">
-            <h2 class="section-title jp-title fade-up">店舗案内</h2>
+            <h2 class="section-title brush-title fade-up">店舗案内</h2>
             
             <dl class="info-list">
                 <dt>店名</dt>
