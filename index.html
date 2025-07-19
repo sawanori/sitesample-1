@@ -314,7 +314,21 @@
             height: 100%;
             object-fit: cover;
             filter: brightness(0.85);
-            transform: scale(1.1);
+            transform: scale(1.15);
+            transition: transform 10s linear;
+        }
+        
+        .hero-slide.active img {
+            animation: zoomOut 10s linear forwards;
+        }
+        
+        @keyframes zoomOut {
+            from {
+                transform: scale(1.15);
+            }
+            to {
+                transform: scale(1);
+            }
         }
         
         /* スライドにオーバーレイを追加 */
@@ -375,6 +389,12 @@
                 height: 100%;
                 object-fit: cover;
                 filter: brightness(0.85);
+                transform: scale(1.15);
+                transition: transform 10s linear;
+            }
+            
+            .hero-slide-mobile.active img {
+                animation: zoomOut 10s linear forwards;
             }
             
             /* スマホ用オーバーレイ */
@@ -2757,6 +2777,7 @@
             background: linear-gradient(180deg, #1f1f24 0%, #26262b 50%, #1f1f24 100%);
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
         
         /* 背景の微細なテクスチャ */
@@ -3690,6 +3711,24 @@
 
         .craft-section {
             background: linear-gradient(180deg, #26262b 0%, #323237 100%);
+        }
+
+        /* パララックス背景2 */
+        .parallax-bg-wrapper.parallax-bg-2 {
+            background-image: url('./images/DSC00406.jpg');
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .parallax-bg-wrapper.parallax-bg-2.active {
+            opacity: 1;
+        }
+        
+        /* スマートフォン用背景画像2 */
+        @media (max-width: 768px) {
+            .parallax-bg-wrapper.parallax-bg-2 {
+                background-image: url('./images/DSC00429.jpg');
+            }
         }
 
         /* タブレット対応 */
@@ -5767,6 +5806,19 @@
         </div>
     </section>
 
+    <!-- パララックス背景2 -->
+    <div class="parallax-bg-wrapper parallax-bg-2"></div>
+
+    <!-- 本場九州仕込みのもつ鍋を楽しむパララックスセクション -->
+    <section class="intro-parallax-section intro-parallax-2" id="intro-parallax-2">
+        <div class="intro-content">
+            <h2 class="intro-title-vertical jp-title fade-up">
+                本場九州仕込みの<br>
+                もつ鍋を楽しむ
+            </h2>
+        </div>
+    </section>
+
     <!-- 空間セクション -->
     <section class="space-section" id="space">
         <div class="space-grid-container">
@@ -6611,65 +6663,104 @@
                 craftObserver.observe(image);
             });
             
-            // パララックス背景のフェードアウト制御
-            const parallaxBg = document.querySelector('.parallax-bg-wrapper');
-            const introSection = document.querySelector('.intro-parallax-section');
+            // パララックス背景の切り替え制御
+            const parallaxBg1 = document.querySelector('.parallax-bg-wrapper:not(.parallax-bg-2)');
+            const parallaxBg2 = document.querySelector('.parallax-bg-wrapper.parallax-bg-2');
+            const introSection1 = document.querySelector('.intro-parallax-section:not(.intro-parallax-2)');
+            const introSection2 = document.querySelector('.intro-parallax-section.intro-parallax-2');
             
-            if (parallaxBg && introSection) {
-                function updateParallaxOpacity() {
-                    const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
-                    const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
-                    
-                    const sectionRect = introSection.getBoundingClientRect();
-                    const sectionTop = sectionRect.top;
-                    const sectionHeight = sectionRect.height;
+            function updateParallaxTransition() {
+                const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
+                const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
+                
+                // 2番目のセクションの表示判定を先に行う
+                if (introSection2 && parallaxBg2) {
+                    const section2Rect = introSection2.getBoundingClientRect();
+                    const section2Top = section2Rect.top;
                     const windowHeight = window.innerHeight;
                     
-                    // セクションが画面の上半分を超えたらフェードアウト開始
-                    if (sectionTop < windowHeight * 0.5) {
-                        // セクションの下端が画面の上端に近づくにつれて黒くフェードアウト
-                        const fadeStart = windowHeight * 0.5;
-                        const fadeEnd = -sectionHeight * 0.5;
-                        const fadeRange = fadeStart - fadeEnd;
-                        const currentPosition = sectionTop - fadeEnd;
-                        let fadeProgress = 1 - (currentPosition / fadeRange);
+                    // 2番目のセクションが画面に表示されているかチェック
+                    const isSection2Visible = section2Top < windowHeight && section2Top > -section2Rect.height;
+                    
+                    if (isSection2Visible) {
+                        // 2番目の背景を表示
+                        parallaxBg2.classList.add('active');
+                        parallaxBg1.classList.add('fade-out');
                         
-                        // フェード進行度を0から1の範囲に制限
-                        fadeProgress = Math.max(0, Math.min(1, fadeProgress));
-                        
-                        // 黒いオーバーレイの透明度を調整
-                        const blackOverlay = parallaxBg.querySelector('::after') || parallaxBg;
-                        const overlayOpacity = 0.4 + (0.6 * fadeProgress); // 0.4から1.0まで
-                        
-                        // CSSカスタムプロパティまたはスタイルで制御
-                        parallaxBg.style.setProperty('--overlay-opacity', overlayOpacity);
-                        
-                        // 完全に黒くなったらfade-outクラスを追加
-                        if (fadeProgress >= 0.95) {
-                            parallaxBg.classList.add('fade-out');
+                        // 2番目のセクションのフェードアウト処理
+                        if (section2Top < windowHeight * 0.5) {
+                            const fadeStart = windowHeight * 0.5;
+                            const fadeEnd = -section2Rect.height * 0.5;
+                            const fadeRange = fadeStart - fadeEnd;
+                            const currentPosition = section2Top - fadeEnd;
+                            let fadeProgress = 1 - (currentPosition / fadeRange);
+                            fadeProgress = Math.max(0, Math.min(1, fadeProgress));
+                            
+                            const overlayOpacity = 0.4 + (0.6 * fadeProgress);
+                            parallaxBg2.style.setProperty('--overlay-opacity', overlayOpacity);
+                            
+                            if (fadeProgress >= 0.95) {
+                                parallaxBg2.classList.add('fade-out');
+                            } else {
+                                parallaxBg2.classList.remove('fade-out');
+                            }
                         } else {
-                            parallaxBg.classList.remove('fade-out');
+                            parallaxBg2.style.setProperty('--overlay-opacity', 0.4);
+                            parallaxBg2.classList.remove('fade-out');
                         }
                     } else {
-                        // セクションが画面の下半分にある場合は通常表示
-                        parallaxBg.style.setProperty('--overlay-opacity', 0.4);
-                        parallaxBg.classList.remove('fade-out');
+                        // 2番目のセクションが見えない場合は1番目の背景に戻す
+                        parallaxBg2.classList.remove('active');
+                        parallaxBg2.classList.remove('fade-out');
+                        parallaxBg2.style.setProperty('--overlay-opacity', 0.4);
                     }
                 }
                 
-                // スクロールイベントの設定
-                if (window.innerWidth <= 768) {
-                    const scrollContainer = document.querySelector('.scroll-container');
-                    if (scrollContainer) {
-                        scrollContainer.addEventListener('scroll', updateParallaxOpacity);
+                // 1番目のセクションの処理
+                if (introSection1 && parallaxBg1) {
+                    const section1Rect = introSection1.getBoundingClientRect();
+                    const section1Top = section1Rect.top;
+                    const section1Height = section1Rect.height;
+                    const windowHeight = window.innerHeight;
+                    
+                    // 2番目の背景がアクティブでない場合のみ1番目の処理を行う
+                    if (!parallaxBg2 || !parallaxBg2.classList.contains('active')) {
+                        if (section1Top < windowHeight * 0.5) {
+                            const fadeStart = windowHeight * 0.5;
+                            const fadeEnd = -section1Height * 0.5;
+                            const fadeRange = fadeStart - fadeEnd;
+                            const currentPosition = section1Top - fadeEnd;
+                            let fadeProgress = 1 - (currentPosition / fadeRange);
+                            fadeProgress = Math.max(0, Math.min(1, fadeProgress));
+                            
+                            const overlayOpacity = 0.4 + (0.6 * fadeProgress);
+                            parallaxBg1.style.setProperty('--overlay-opacity', overlayOpacity);
+                            
+                            if (fadeProgress >= 0.95) {
+                                parallaxBg1.classList.add('fade-out');
+                            } else {
+                                parallaxBg1.classList.remove('fade-out');
+                            }
+                        } else {
+                            parallaxBg1.style.setProperty('--overlay-opacity', 0.4);
+                            parallaxBg1.classList.remove('fade-out');
+                        }
                     }
-                } else {
-                    window.addEventListener('scroll', updateParallaxOpacity);
                 }
-                
-                // 初期状態を設定
-                updateParallaxOpacity();
             }
+            
+            // スクロールイベントの設定
+            if (window.innerWidth <= 768) {
+                const scrollContainer = document.querySelector('.scroll-container');
+                if (scrollContainer) {
+                    scrollContainer.addEventListener('scroll', updateParallaxTransition);
+                }
+            } else {
+                window.addEventListener('scroll', updateParallaxTransition);
+            }
+            
+            // 初期状態を設定
+            updateParallaxTransition();
             
             // モバイルナビゲーションのスクロール制御
             if (window.innerWidth <= 768) {
@@ -7277,23 +7368,55 @@
         if (isMobile && heroSlidesMobile.length > 0) {
             let currentSlideMobile = 0;
             
+            // 最初のスライドのアニメーションをリセットして開始
+            const firstSlideMobile = heroSlidesMobile[0].querySelector('img');
+            if (firstSlideMobile) {
+                firstSlideMobile.style.animation = 'none';
+                firstSlideMobile.offsetHeight; // リフローを強制
+                firstSlideMobile.style.animation = 'zoomOut 10s linear forwards';
+            }
+            
             function changeSlideMobile() {
                 heroSlidesMobile[currentSlideMobile].classList.remove('active');
                 currentSlideMobile = (currentSlideMobile + 1) % heroSlidesMobile.length;
                 heroSlidesMobile[currentSlideMobile].classList.add('active');
+                
+                // 新しいスライドのアニメーションをリセット
+                const nextImg = heroSlidesMobile[currentSlideMobile].querySelector('img');
+                if (nextImg) {
+                    nextImg.style.animation = 'none';
+                    nextImg.offsetHeight;
+                    nextImg.style.animation = 'zoomOut 10s linear forwards';
+                }
             }
             
-            setInterval(changeSlideMobile, 5000);
+            setInterval(changeSlideMobile, 10000);
         } else if (!isMobile && heroSlidesDesktop.length > 0) {
             let currentSlideDesktop = 0;
+            
+            // 最初のスライドのアニメーションをリセットして開始
+            const firstSlideDesktop = heroSlidesDesktop[0].querySelector('img');
+            if (firstSlideDesktop) {
+                firstSlideDesktop.style.animation = 'none';
+                firstSlideDesktop.offsetHeight; // リフローを強制
+                firstSlideDesktop.style.animation = 'zoomOut 10s linear forwards';
+            }
             
             function changeSlideDesktop() {
                 heroSlidesDesktop[currentSlideDesktop].classList.remove('active');
                 currentSlideDesktop = (currentSlideDesktop + 1) % heroSlidesDesktop.length;
                 heroSlidesDesktop[currentSlideDesktop].classList.add('active');
+                
+                // 新しいスライドのアニメーションをリセット
+                const nextImg = heroSlidesDesktop[currentSlideDesktop].querySelector('img');
+                if (nextImg) {
+                    nextImg.style.animation = 'none';
+                    nextImg.offsetHeight;
+                    nextImg.style.animation = 'zoomOut 10s linear forwards';
+                }
             }
             
-            setInterval(changeSlideDesktop, 5000);
+            setInterval(changeSlideDesktop, 10000);
         }
     </script>
     
