@@ -1317,19 +1317,25 @@
                 overflow-y: auto;
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: contain;
+                transition: bottom 0.3s ease-out;
             }
             
             /* ナビゲーションを完全に独立させる */
             .mobile-bottom-nav {
-                position: absolute !important;
+                position: fixed !important;
                 bottom: 0 !important;
                 left: 0;
                 right: 0;
                 top: auto !important;
-                transition: none !important;
-                -webkit-transition: none !important;
-                transform: none !important;
-                -webkit-transform: none !important;
+                transition: transform 0.3s ease-out !important;
+                -webkit-transition: transform 0.3s ease-out !important;
+                transform: translateY(0) !important;
+                -webkit-transform: translateY(0) !important;
+            }
+            
+            .mobile-bottom-nav.hidden {
+                transform: translateY(100%) !important;
+                -webkit-transform: translateY(100%) !important;
             }
         }
         
@@ -6602,15 +6608,18 @@
                         scrollTimeout = setTimeout(() => {
                             // スクロールが止まったら、位置に関係なくナビを表示
                             mobileBottomNav.classList.remove('hidden');
+                            scrollContainer.style.bottom = '60px';
                         }, 150);
                         
                         if (Math.abs(scrollDiff) > 5) { // 5px以上の移動を検知
                             if (scrollDiff > 0 && currentScrollTop > 100) {
                                 // 下にスクロール かつ 100px以上スクロールしている場合は非表示
                                 mobileBottomNav.classList.add('hidden');
+                                scrollContainer.style.bottom = '0';
                             } else if (scrollDiff < 0) {
                                 // 上にスクロールしたら表示
                                 mobileBottomNav.classList.remove('hidden');
+                                scrollContainer.style.bottom = '60px';
                             }
                         }
                         
