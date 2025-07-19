@@ -3640,15 +3640,7 @@
             transition: opacity 0.5s ease-out;
         }
         
-        .parallax-bg-wrapper.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .parallax-bg-wrapper {
-            --overlay-opacity: 0.4;
-        }
-        
+        /* 暗めのオーバーレイで可読性向上 */
         .parallax-bg-wrapper::after {
             content: '';
             position: absolute;
@@ -3656,16 +3648,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, var(--overlay-opacity));
-            transition: background 0.5s ease-out;
-        }
-        
-        .parallax-bg-wrapper.fade-out {
-            opacity: 1; /* 画像自体は表示したまま */
-        }
-        
-        .parallax-bg-wrapper.fade-out::after {
-            background: rgba(0, 0, 0, 1); /* 完全に黒く */
+            background: rgba(0, 0, 0, 0.5); /* 50%の黒いオーバーレイで十分な可読性を確保 */
+            pointer-events: none;
         }
 
         /* 冒頭メッセージパララックスセクション（透明な窓） */
@@ -3717,11 +3701,7 @@
         .parallax-bg-wrapper.parallax-bg-2 {
             background-image: url('./images/DSC00406.jpg');
             opacity: 0;
-            transition: opacity 1s ease-in-out;
-        }
-        
-        .parallax-bg-wrapper.parallax-bg-2.active {
-            opacity: 1;
+            transition: none; /* アニメーションなし */
         }
         
         /* スマートフォン用背景画像2 */
@@ -5596,7 +5576,6 @@
             <a href="#" class="logo jp-title">木村屋本店<small style="color: white; font-size: 0.7em; margin-left: 0.3em; font-weight: 300;">サンプル店</small></a>
             <ul class="nav-menu">
                 <li><a href="#home">ホーム</a></li>
-                <li><a href="#craft">こだわり</a></li>
                 <li><a href="#features">特徴</a></li>
                 <li><a href="#space">本場九州仕込み</a></li>
                 <li><a href="#room">お品書き</a></li>
@@ -5625,7 +5604,6 @@
             </button>
             <ul class="mobile-nav">
                 <li><a href="#home" class="mobile-link">ホーム</a></li>
-                <li><a href="#craft" class="mobile-link">こだわり</a></li>
                 <li><a href="#features" class="mobile-link">特徴</a></li>
                 <li><a href="#space" class="mobile-link">本場九州仕込み</a></li>
                 <li><a href="#room" class="mobile-link">お品書き</a></li>
@@ -5644,7 +5622,6 @@
     <!-- ヒーロー用縦書きナビゲーション -->
     <nav class="hero-nav-menu" id="heroNavMenu">
         <a href="#home">ホーム</a>
-        <a href="#craft">こだわり</a>
         <a href="#room">お品書き</a>
         <a href="#gallery">ギャラリー</a>
         <a href="#info">店舗情報</a>
@@ -6666,85 +6643,27 @@
             // パララックス背景の切り替え制御
             const parallaxBg1 = document.querySelector('.parallax-bg-wrapper:not(.parallax-bg-2)');
             const parallaxBg2 = document.querySelector('.parallax-bg-wrapper.parallax-bg-2');
-            const introSection1 = document.querySelector('.intro-parallax-section:not(.intro-parallax-2)');
+            const featuresSection = document.querySelector('#features');
             const introSection2 = document.querySelector('.intro-parallax-section.intro-parallax-2');
             
             function updateParallaxTransition() {
                 const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
                 const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
                 
-                // 2番目のセクションの表示判定を先に行う
-                if (introSection2 && parallaxBg2) {
-                    const section2Rect = introSection2.getBoundingClientRect();
-                    const section2Top = section2Rect.top;
-                    const windowHeight = window.innerHeight;
+                // 「当店の４つのこだわり」セクションを基準に背景を切り替え
+                if (featuresSection && parallaxBg1 && parallaxBg2) {
+                    const featuresRect = featuresSection.getBoundingClientRect();
+                    const featuresTop = featuresRect.top;
                     
-                    // 2番目のセクションが画面に表示されているかチェック
-                    const isSection2Visible = section2Top < windowHeight && section2Top > -section2Rect.height;
-                    
-                    if (isSection2Visible) {
-                        // 2番目の背景を表示
-                        parallaxBg2.classList.add('active');
-                        parallaxBg1.classList.add('fade-out');
-                        
-                        // 2番目のセクションのフェードアウト処理
-                        if (section2Top < windowHeight * 0.5) {
-                            const fadeStart = windowHeight * 0.5;
-                            const fadeEnd = -section2Rect.height * 0.5;
-                            const fadeRange = fadeStart - fadeEnd;
-                            const currentPosition = section2Top - fadeEnd;
-                            let fadeProgress = 1 - (currentPosition / fadeRange);
-                            fadeProgress = Math.max(0, Math.min(1, fadeProgress));
-                            
-                            const overlayOpacity = 0.4 + (0.6 * fadeProgress);
-                            parallaxBg2.style.setProperty('--overlay-opacity', overlayOpacity);
-                            
-                            if (fadeProgress >= 0.95) {
-                                parallaxBg2.classList.add('fade-out');
-                            } else {
-                                parallaxBg2.classList.remove('fade-out');
-                            }
-                        } else {
-                            parallaxBg2.style.setProperty('--overlay-opacity', 0.4);
-                            parallaxBg2.classList.remove('fade-out');
-                        }
+                    // featuresセクションの上端が画面に入ったら即座に背景切り替え
+                    if (featuresTop < window.innerHeight) {
+                        // 2番目の背景を即座に表示
+                        parallaxBg2.style.opacity = '1';
+                        parallaxBg1.style.opacity = '0';
                     } else {
-                        // 2番目のセクションが見えない場合は1番目の背景に戻す
-                        parallaxBg2.classList.remove('active');
-                        parallaxBg2.classList.remove('fade-out');
-                        parallaxBg2.style.setProperty('--overlay-opacity', 0.4);
-                    }
-                }
-                
-                // 1番目のセクションの処理
-                if (introSection1 && parallaxBg1) {
-                    const section1Rect = introSection1.getBoundingClientRect();
-                    const section1Top = section1Rect.top;
-                    const section1Height = section1Rect.height;
-                    const windowHeight = window.innerHeight;
-                    
-                    // 2番目の背景がアクティブでない場合のみ1番目の処理を行う
-                    if (!parallaxBg2 || !parallaxBg2.classList.contains('active')) {
-                        if (section1Top < windowHeight * 0.5) {
-                            const fadeStart = windowHeight * 0.5;
-                            const fadeEnd = -section1Height * 0.5;
-                            const fadeRange = fadeStart - fadeEnd;
-                            const currentPosition = section1Top - fadeEnd;
-                            let fadeProgress = 1 - (currentPosition / fadeRange);
-                            fadeProgress = Math.max(0, Math.min(1, fadeProgress));
-                            
-                            const overlayOpacity = 0.4 + (0.6 * fadeProgress);
-                            parallaxBg1.style.setProperty('--overlay-opacity', overlayOpacity);
-                            
-                            if (fadeProgress >= 0.95) {
-                                parallaxBg1.classList.add('fade-out');
-                            } else {
-                                parallaxBg1.classList.remove('fade-out');
-                            }
-                        } else {
-                            parallaxBg1.style.setProperty('--overlay-opacity', 0.4);
-                            parallaxBg1.classList.remove('fade-out');
-                        }
+                        // 1番目の背景を表示
+                        parallaxBg2.style.opacity = '0';
+                        parallaxBg1.style.opacity = '1';
                     }
                 }
             }
