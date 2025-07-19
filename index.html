@@ -3615,6 +3615,13 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .parallax-bg-wrapper.fade-out {
+            opacity: 0;
+            pointer-events: none;
         }
 
         .parallax-bg-wrapper::after {
@@ -6590,6 +6597,61 @@
             craftImages.forEach(image => {
                 craftObserver.observe(image);
             });
+            
+            // パララックス背景のフェードアウト制御
+            const parallaxBg = document.querySelector('.parallax-bg-wrapper');
+            const introSection = document.querySelector('.intro-parallax-section');
+            
+            if (parallaxBg && introSection) {
+                function updateParallaxOpacity() {
+                    const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
+                    const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
+                    
+                    const sectionRect = introSection.getBoundingClientRect();
+                    const sectionTop = sectionRect.top;
+                    const sectionHeight = sectionRect.height;
+                    const windowHeight = window.innerHeight;
+                    
+                    // セクションが画面の上半分を超えたらフェードアウト開始
+                    if (sectionTop < windowHeight * 0.5) {
+                        // セクションの下端が画面の上端に近づくにつれて透明度を下げる
+                        const fadeStart = windowHeight * 0.5;
+                        const fadeEnd = -sectionHeight;
+                        const fadeRange = fadeStart - fadeEnd;
+                        const currentPosition = sectionTop - fadeEnd;
+                        let opacity = currentPosition / fadeRange;
+                        
+                        // 透明度を0から1の範囲に制限
+                        opacity = Math.max(0, Math.min(1, opacity));
+                        
+                        parallaxBg.style.opacity = opacity;
+                        
+                        // 完全に透明になったらfade-outクラスを追加
+                        if (opacity === 0) {
+                            parallaxBg.classList.add('fade-out');
+                        } else {
+                            parallaxBg.classList.remove('fade-out');
+                        }
+                    } else {
+                        // セクションが画面の下半分にある場合は完全に表示
+                        parallaxBg.style.opacity = 1;
+                        parallaxBg.classList.remove('fade-out');
+                    }
+                }
+                
+                // スクロールイベントの設定
+                if (window.innerWidth <= 768) {
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    if (scrollContainer) {
+                        scrollContainer.addEventListener('scroll', updateParallaxOpacity);
+                    }
+                } else {
+                    window.addEventListener('scroll', updateParallaxOpacity);
+                }
+                
+                // 初期状態を設定
+                updateParallaxOpacity();
+            }
             
             // モバイルナビゲーションのスクロール制御
             if (window.innerWidth <= 768) {
