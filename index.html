@@ -4003,15 +4003,15 @@
             }
             
             .craft-image-2 {
-                grid-column: 6 / 11;
-                grid-row: 2 / 6;
+                grid-column: 5 / 11;  /* サイズを少し大きく */
+                grid-row: 3 / 7;     /* Y軸方向下に移動 */
                 opacity: 0;
                 transform: translateY(30px);
             }
             
             .craft-image-3 {
-                grid-column: 3 / 8;
-                grid-row: 5 / 9;
+                grid-column: 1 / 7;  /* より左に配置 */
+                grid-row: 6 / 9;     /* より下に配置 */
                 opacity: 0;
                 transform: translateY(30px);
             }
@@ -6514,6 +6514,55 @@
             if (isLineApp) {
                 document.documentElement.classList.add('line-browser');
             }
+            
+            // スムーズスクロール機能
+            function smoothScrollTo(targetId) {
+                const targetElement = document.querySelector(targetId);
+                if (!targetElement) return;
+                
+                if (window.innerWidth <= 768) {
+                    // スマートフォンの場合
+                    const scrollContainer = document.querySelector('.scroll-container');
+                    if (scrollContainer) {
+                        const containerRect = scrollContainer.getBoundingClientRect();
+                        const targetRect = targetElement.getBoundingClientRect();
+                        const scrollTop = scrollContainer.scrollTop;
+                        const targetTop = targetRect.top - containerRect.top + scrollTop;
+                        
+                        scrollContainer.scrollTo({
+                            top: targetTop - 80, // ヘッダーの高さ分を考慮
+                            behavior: 'smooth'
+                        });
+                    }
+                } else {
+                    // デスクトップの場合
+                    const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                    window.scrollTo({
+                        top: targetPosition - 80, // ヘッダーの高さ分を考慮
+                        behavior: 'smooth'
+                    });
+                }
+            }
+            
+            // すべてのナビゲーションリンクにイベントリスナーを追加
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    // #のみのリンクや#reservationは除外
+                    if (href === '#' || href === '#reservation') return;
+                    
+                    e.preventDefault();
+                    smoothScrollTo(href);
+                    
+                    // モバイルメニューが開いている場合は閉じる
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (mobileMenu && mobileMenu.classList.contains('active')) {
+                        mobileMenu.classList.remove('active');
+                        document.body.classList.remove('menu-open');
+                    }
+                });
+            });
             
             // craft section画像のスクロールアニメーション
             const craftImages = document.querySelectorAll('.craft-image-1, .craft-image-2, .craft-image-3');
