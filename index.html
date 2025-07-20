@@ -3637,7 +3637,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             opacity: 1;
-            transition: opacity 0.5s ease-out;
+            transition: none; /* トランジションアニメーションを完全削除 */
         }
         
         /* 暗めのオーバーレイで可読性向上 */
@@ -6650,14 +6650,14 @@
                 const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
                 const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
                 
-                // 最初のパララックスセクションを基準に背景を切り替え
-                const firstParallaxSection = document.querySelector('.intro-parallax-section:not(.intro-parallax-2)');
-                if (firstParallaxSection && parallaxBg1 && parallaxBg2) {
-                    const firstParallaxRect = firstParallaxSection.getBoundingClientRect();
-                    const firstParallaxBottom = firstParallaxRect.bottom;
+                // こだわりセクションを基準に背景を切り替え
+                const craftSection = document.querySelector('#craft');
+                if (craftSection && parallaxBg1 && parallaxBg2) {
+                    const craftRect = craftSection.getBoundingClientRect();
+                    const craftBottom = craftRect.bottom;
                     
-                    // 最初のパララックスセクションの下端が画面の上から25%の位置を過ぎたら背景切り替え
-                    if (firstParallaxBottom < window.innerHeight * 0.75) {
+                    // こだわりセクションが画面から出たら背景切り替え
+                    if (craftBottom < window.innerHeight) {
                         // 2番目の背景を即座に表示
                         parallaxBg2.style.opacity = '1';
                         parallaxBg1.style.opacity = '0';
