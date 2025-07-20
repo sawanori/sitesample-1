@@ -1569,6 +1569,8 @@
                 -webkit-overflow-scrolling: touch;
                 overscroll-behavior: contain;
                 transition: bottom 0.3s ease-out;
+                /* スムーズスクロールを無効化 */
+                scroll-behavior: auto !important;
             }
             
             /* ナビゲーションを完全に独立させる */
@@ -6880,6 +6882,11 @@
             const introSection2 = document.querySelector('.intro-parallax-section.intro-parallax-2');
             
             function updateParallaxTransition() {
+                // スマートフォンではパララックス切り替えを無効化
+                if (window.innerWidth <= 768) {
+                    return;
+                }
+                
                 const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
                 const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
                 
