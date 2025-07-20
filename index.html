@@ -6909,14 +6909,44 @@
                 }
             }
             
+            // スクロールイベントのthrottle関数
+            function throttle(func, wait) {
+                let timeout;
+                let previous = 0;
+                return function() {
+                    const now = Date.now();
+                    const remaining = wait - (now - previous);
+                    const context = this;
+                    const args = arguments;
+                    
+                    if (remaining <= 0 || remaining > wait) {
+                        if (timeout) {
+                            clearTimeout(timeout);
+                            timeout = null;
+                        }
+                        previous = now;
+                        func.apply(context, args);
+                    } else if (!timeout) {
+                        timeout = setTimeout(() => {
+                            previous = Date.now();
+                            timeout = null;
+                            func.apply(context, args);
+                        }, remaining);
+                    }
+                };
+            }
+            
+            // throttleを適用したupdateParallaxTransition
+            const throttledUpdate = throttle(updateParallaxTransition, 100);
+            
             // スクロールイベントの設定
             if (window.innerWidth <= 768) {
                 const scrollContainer = document.querySelector('.scroll-container');
                 if (scrollContainer) {
-                    scrollContainer.addEventListener('scroll', updateParallaxTransition);
+                    scrollContainer.addEventListener('scroll', throttledUpdate, { passive: true });
                 }
             } else {
-                window.addEventListener('scroll', updateParallaxTransition);
+                window.addEventListener('scroll', throttledUpdate, { passive: true });
             }
             
             // 初期状態を設定
