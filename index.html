@@ -44,6 +44,13 @@
             scroll-behavior: smooth;
         }
 
+        /* スマートフォンでスクロール動作を調整 */
+        @media (max-width: 768px) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
         /* ヘッダー */
         .header {
             position: fixed;
@@ -7188,36 +7195,40 @@
         // パララックス効果は CSS の background-attachment: fixed で実現
         // モバイルでは background-attachment: scroll にフォールバック
 
-        // パララックス効果
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.parallax-image');
-            
-            parallaxElements.forEach(element => {
-                const speed = element.dataset.speed || 0.5;
-                const yPos = -(scrolled * speed);
-                element.style.transform = `translateY(${yPos}px)`;
-            });
-        });
-
-        // 特徴セクションのスクロール連動エフェクト
-        window.addEventListener('scroll', () => {
-            const featureCards = document.querySelectorAll('.feature-card');
-            const windowHeight = window.innerHeight;
-            
-            featureCards.forEach((card, index) => {
-                const cardTop = card.getBoundingClientRect().top;
-                const cardHeight = card.offsetHeight;
+        // パララックス効果（スマートフォンでは無効化）
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.parallax-image');
                 
-                if (cardTop < windowHeight && cardTop > -cardHeight) {
-                    const scrollPercent = 1 - (cardTop / windowHeight);
-                    const parallaxSpeed = 0.1 * (index % 2 === 0 ? 1 : -1);
-                    const translateX = scrollPercent * parallaxSpeed * 50;
-                    
-                    card.style.transform = `translateX(${translateX}px)`;
-                }
+                parallaxElements.forEach(element => {
+                    const speed = element.dataset.speed || 0.5;
+                    const yPos = -(scrolled * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
             });
-        });
+        }
+
+        // 特徴セクションのスクロール連動エフェクト（スマートフォンでは無効化）
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', () => {
+                const featureCards = document.querySelectorAll('.feature-card');
+                const windowHeight = window.innerHeight;
+                
+                featureCards.forEach((card, index) => {
+                    const cardTop = card.getBoundingClientRect().top;
+                    const cardHeight = card.offsetHeight;
+                    
+                    if (cardTop < windowHeight && cardTop > -cardHeight) {
+                        const scrollPercent = 1 - (cardTop / windowHeight);
+                        const parallaxSpeed = 0.1 * (index % 2 === 0 ? 1 : -1);
+                        const translateX = scrollPercent * parallaxSpeed * 50;
+                        
+                        card.style.transform = `translateX(${translateX}px)`;
+                    }
+                });
+            });
+        }
 
         // 季節に応じた装飾
         const currentMonth = new Date().getMonth() + 1;
