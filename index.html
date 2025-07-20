@@ -63,6 +63,17 @@
             border-bottom: 1px solid rgba(166, 152, 71, 0.3);
             transition: all 0.3s ease;
         }
+        
+        /* モバイル時のナビ揺れ対策 */
+        @media (max-width: 768px) {
+            .header {
+                position: sticky;
+                top: 0;
+                z-index: 50;
+                transform: translateZ(0);
+                padding-top: env(safe-area-inset-top);
+            }
+        }
 
         /* ヒーロー内でのナビゲーション非表示 */
         .header.hero-hidden {
@@ -306,65 +317,36 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 110%;
+            height: 100%;
             overflow: hidden;
-            background-color: #000; /* 黒背景を追加 */
+            background-color: #000;
         }
         
-        /* スライドショー用のスライドコンテナ */
-        .hero-slider {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .hero-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            z-index: 1;
-        }
-        
-        .hero-slide.active {
-            opacity: 1;
-            z-index: 2;
-        }
-        
-        .hero-slide img {
+        /* ヒーロー画像スタイル */
+        .hero-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: brightness(0.85);
-            transform: scale(1.15);
-            transition: transform 10s linear;
+            filter: brightness(0.7);
         }
         
-        .hero-slide.active img {
-            animation: zoomOut 10s linear forwards;
+        .hero-image-desktop {
+            display: block;
         }
         
-        @keyframes zoomOut {
-            from {
-                transform: scale(1.15);
-            }
-            to {
-                transform: scale(1);
-            }
+        .hero-image-mobile {
+            display: none;
         }
         
-        /* スライドにオーバーレイを追加 */
-        .hero-slide::after {
+        /* ヒーロー画像のオーバーレイ */
+        .hero-bg::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             pointer-events: none;
         }
 
@@ -379,59 +361,16 @@
             z-index: 10;
         }
         
-        /* スマホ用のスライド（デフォルトは非表示） */
-        .hero-slide-mobile {
-            display: none;
-        }
-        
         /* スマホ用スタイル */
         @media (max-width: 768px) {
-            /* PC用スライドを非表示 */
-            .hero-slide-desktop {
-                display: none !important;
+            /* PC用画像を非表示 */
+            .hero-image-desktop {
+                display: none;
             }
             
-            /* スマホ用スライドを表示 */
-            .hero-slide-mobile {
-                display: block !important;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                transition: opacity 2s ease-in-out;
-                z-index: 1;
-            }
-            
-            .hero-slide-mobile.active {
-                opacity: 1;
-                z-index: 2;
-            }
-            
-            .hero-slide-mobile img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                filter: brightness(0.85);
-                transform: scale(1.15);
-                transition: transform 10s linear;
-            }
-            
-            .hero-slide-mobile.active img {
-                animation: zoomOut 10s linear forwards;
-            }
-            
-            /* スマホ用オーバーレイ */
-            .hero-slide-mobile::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.3);
-                pointer-events: none;
+            /* スマホ用画像を表示 */
+            .hero-image-mobile {
+                display: block;
             }
             
             /* ロゴを左上に配置 */
@@ -5860,35 +5799,15 @@
     <!-- ヒーロー -->
     <section class="hero" id="home">
         <div class="hero-bg">
-            <div class="hero-slider">
-                <!-- PC・タブレット用 -->
-                <div class="hero-slide hero-slide-desktop active">
-                    <img src="./images/DSC00442.jpg" alt="木村屋本店 メインビジュアル1">
-                </div>
-                <div class="hero-slide hero-slide-desktop">
-                    <img src="./images/DSC00456.jpg" alt="木村屋本店 メインビジュアル2">
-                </div>
-                <div class="hero-slide hero-slide-desktop">
-                    <img src="./images/DSC00398.jpg" alt="木村屋本店 メインビジュアル3">
-                </div>
-                <div class="hero-slide hero-slide-desktop">
-                    <img src="./images/DSC00406.jpg" alt="木村屋本店 メインビジュアル4">
-                </div>
-                
-                <!-- スマホ用 -->
-                <div class="hero-slide hero-slide-mobile active">
-                    <img src="./images/DSC00400.jpg" alt="木村屋本店 スマホ用1">
-                </div>
-                <div class="hero-slide hero-slide-mobile">
-                    <img src="./images/DSC00480.jpg" alt="木村屋本店 スマホ用2">
-                </div>
-                <div class="hero-slide hero-slide-mobile">
-                    <img src="./images/DSC00653.jpg" alt="木村屋本店 スマホ用3">
-                </div>
-            </div>
+            <!-- PC・タブレット用 -->
+            <img src="./images/DSC00442.jpg" alt="博多もつ鍋専門店の店内" class="hero-image hero-image-desktop" loading="eager">
+            <!-- スマホ用 -->
+            <img src="./images/DSC00400.jpg" alt="博多もつ鍋専門店の店内" class="hero-image hero-image-mobile" loading="eager">
         </div>
         <div class="hero-content">
             <img src="./images/log.png" alt="木村屋本店" class="hero-logo fade-up">
+            <h1 class="hero-title fade-up">博多もつ鍋専門店</h1>
+            <p class="hero-subtitle fade-up">110席の大箱で宴会を</p>
         </div>
         <div class="hero-info fade-up">
             <span>OPEN 10:00</span>
@@ -5927,17 +5846,17 @@
             </div>
             
             <div class="craft-image-1">
-                <img src="./images/DSC00473.jpg" alt="こだわりの食材" class="craft-img fade-up">
+                <img src="./images/DSC00473.jpg" alt="こだわりの食材" class="craft-img fade-up" loading="lazy">
                 <div class="craft-image-overlay"></div>
             </div>
             
             <div class="craft-image-2">
-                <img src="./images/no1-0357.jpg" alt="ちょっとは九州じゃない料理" class="craft-img fade-up">
+                <img src="./images/no1-0357.jpg" alt="ちょっとは九州じゃない料理" class="craft-img fade-up" loading="lazy">
                 <div class="craft-image-overlay"></div>
             </div>
             
             <div class="craft-image-3">
-                <img src="./images/no1-0208.jpg" alt="こだわりの料理" class="craft-img fade-up">
+                <img src="./images/no1-0208.jpg" alt="こだわりの料理" class="craft-img fade-up" loading="lazy">
                 <div class="craft-image-overlay"></div>
             </div>
             
@@ -5950,7 +5869,7 @@
         <div class="features-grid">
             <!-- カード1: 伝統の技 (モバイルでは2番目) -->
             <div class="feature-card masked-content order-mobile-2">
-                <img src="./images/no1-0241.jpg" alt="こだわりの食材" class="feature-image">
+                <img src="./images/no1-0241.jpg" alt="こだわりの食材" class="feature-image" loading="lazy">
                 <div class="feature-content">
                     <div class="feature-number">01</div>
                     <h3 class="feature-title jp-title">当店名物！<br>こだわりの博多もつ鍋</h3>
@@ -5976,7 +5895,7 @@
 
             <!-- カード3: 四季の美 (モバイルでは3番目) -->
             <div class="feature-card masked-content order-mobile-3">
-                <img src="./images/DSC00440.jpg" alt="多彩な味" class="feature-image">
+                <img src="./images/DSC00440.jpg" alt="多彩な味" class="feature-image" loading="lazy">
                 <div class="feature-content">
                     <div class="feature-number">02</div>
                     <h3 class="feature-title jp-title">季節の食材と調理で<br>味わう逸品料理</h3>
@@ -5990,7 +5909,7 @@
 
             <!-- カード4: 厳選素材 (モバイルでは4番目) -->
             <div class="feature-card masked-content order-mobile-4">
-                <img src="./images/DSC00689.jpg" alt="充実の逸品" class="feature-image">
+                <img src="./images/DSC00689.jpg" alt="充実の逸品" class="feature-image" loading="lazy">
                 <div class="feature-content">
                     <div class="feature-number">03</div>
                     <h3 class="feature-title jp-title">幹事様に朗報！<br>大好評宴会コース</h3>
@@ -6004,7 +5923,7 @@
 
             <!-- カード5: おもてなし (モバイルでは5番目) -->
             <div class="feature-card masked-content order-mobile-5">
-                <img src="./images/DSC00424.jpg" alt="和の空間" class="feature-image">
+                <img src="./images/DSC00424.jpg" alt="和の空間" class="feature-image" loading="lazy">
                 <div class="feature-content">
                     <div class="feature-number">04</div>
                     <h3 class="feature-title jp-title">様々なシーンに<br>最適な各種空間</h3>
@@ -6039,7 +5958,7 @@
             </div>
             
             <div class="space-hero-image">
-                <img src="./images/no1-0243.jpg" alt="もつ鍋メイン" class="space-hero-img">
+                <img src="./images/no1-0243.jpg" alt="もつ鍋メイン" class="space-hero-img" loading="lazy">
             </div>
             
             
@@ -6055,11 +5974,11 @@
             </div>
             
             <div class="space-image-1">
-                <img src="./images/no1-0220.jpg" alt="もつ鍋風景1" class="space-sub-image">
+                <img src="./images/no1-0220.jpg" alt="博多もつ鍋の調理風景" class="space-sub-image" loading="lazy">
             </div>
             
             <div class="space-image-2">
-                <img src="./images/no1-0235.jpg" alt="もつ鍋風景2" class="space-sub-image">
+                <img src="./images/no1-0235.jpg" alt="もつ鍋の具材アップ" class="space-sub-image" loading="lazy">
             </div>
             
             <div class="space-detail-text-2">
@@ -6074,15 +5993,15 @@
             
             
             <div class="space-circle-1">
-                <img src="./images/DSC00631.jpg" alt="ディテール1" class="space-circle-img">
+                <img src="./images/DSC00631.jpg" alt="伝統の調理器具" class="space-circle-img" loading="lazy">
             </div>
             
             <div class="space-circle-2">
-                <img src="./images/DSC00654.jpg" alt="ディテール2" class="space-circle-img">
+                <img src="./images/DSC00654.jpg" alt="厳選された食材" class="space-circle-img" loading="lazy">
             </div>
             
             <div class="space-circle-3">
-                <img src="./images/DSC00681.jpg" alt="ディテール3" class="space-circle-img">
+                <img src="./images/DSC00681.jpg" alt="職人の技" class="space-circle-img" loading="lazy">
             </div>
             
             <div class="space-quote-block">
@@ -7554,64 +7473,7 @@
             }, hiddenCards.length * 150);
         }
         
-        // ヒーロースライダー
-        const isMobile = window.innerWidth <= 768;
-        const heroSlidesDesktop = document.querySelectorAll('.hero-slide-desktop');
-        const heroSlidesMobile = document.querySelectorAll('.hero-slide-mobile');
-        
-        if (isMobile && heroSlidesMobile.length > 0) {
-            let currentSlideMobile = 0;
-            
-            // 最初のスライドのアニメーションをリセットして開始
-            const firstSlideMobile = heroSlidesMobile[0].querySelector('img');
-            if (firstSlideMobile) {
-                firstSlideMobile.style.animation = 'none';
-                firstSlideMobile.offsetHeight; // リフローを強制
-                firstSlideMobile.style.animation = 'zoomOut 10s linear forwards';
-            }
-            
-            function changeSlideMobile() {
-                heroSlidesMobile[currentSlideMobile].classList.remove('active');
-                currentSlideMobile = (currentSlideMobile + 1) % heroSlidesMobile.length;
-                heroSlidesMobile[currentSlideMobile].classList.add('active');
-                
-                // 新しいスライドのアニメーションをリセット
-                const nextImg = heroSlidesMobile[currentSlideMobile].querySelector('img');
-                if (nextImg) {
-                    nextImg.style.animation = 'none';
-                    nextImg.offsetHeight;
-                    nextImg.style.animation = 'zoomOut 10s linear forwards';
-                }
-            }
-            
-            setInterval(changeSlideMobile, 10000);
-        } else if (!isMobile && heroSlidesDesktop.length > 0) {
-            let currentSlideDesktop = 0;
-            
-            // 最初のスライドのアニメーションをリセットして開始
-            const firstSlideDesktop = heroSlidesDesktop[0].querySelector('img');
-            if (firstSlideDesktop) {
-                firstSlideDesktop.style.animation = 'none';
-                firstSlideDesktop.offsetHeight; // リフローを強制
-                firstSlideDesktop.style.animation = 'zoomOut 10s linear forwards';
-            }
-            
-            function changeSlideDesktop() {
-                heroSlidesDesktop[currentSlideDesktop].classList.remove('active');
-                currentSlideDesktop = (currentSlideDesktop + 1) % heroSlidesDesktop.length;
-                heroSlidesDesktop[currentSlideDesktop].classList.add('active');
-                
-                // 新しいスライドのアニメーションをリセット
-                const nextImg = heroSlidesDesktop[currentSlideDesktop].querySelector('img');
-                if (nextImg) {
-                    nextImg.style.animation = 'none';
-                    nextImg.offsetHeight;
-                    nextImg.style.animation = 'zoomOut 10s linear forwards';
-                }
-            }
-            
-            setInterval(changeSlideDesktop, 10000);
-        }
+        // ヒーロースライダーは削除（1枚画像に変更したため）
     </script>
     
     </div><!-- スクロールコンテナ終了 -->
