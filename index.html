@@ -93,6 +93,24 @@
             .hero-nav-menu {
                 display: none !important;
             }
+            
+            /* スマートフォンでもロゴを左上に配置 */
+            .nav .logo {
+                position: static !important;
+                text-align: left !important;
+                left: auto !important;
+            }
+            
+            .nav {
+                justify-content: space-between !important;
+                padding: 0 20px !important;
+            }
+            
+            /* メニューボタンを右端に配置 */
+            .menu-toggle {
+                display: flex !important;
+                margin-left: auto;
+            }
         }
 
         /* ヒーロー内の縦書きナビゲーションメニュー */
@@ -409,18 +427,18 @@
                 pointer-events: none;
             }
             
-            /* ロゴを中央配置 */
+            /* ロゴを左上に配置 */
             .hero-content {
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                text-align: center;
-                width: 90%;
-                max-width: 300px;
+                top: 20px;
+                left: 20px;
+                transform: none;
+                text-align: left;
+                width: auto;
+                max-width: 200px;
             }
             
             .hero-logo {
-                max-width: 250px;
+                max-width: 150px;
                 width: 100%;
             }
             
@@ -430,7 +448,7 @@
                 transform: translateX(-50%);
                 gap: 30px;
                 font-size: 11px;
-                bottom: 30px;
+                bottom: 15px;
             }
             
             .hero-info span:not(:last-child)::after {
@@ -490,6 +508,209 @@
             height: 16px;
             background: var(--warm-white);
             opacity: 0.4;
+        }
+
+        /* 印象的なキャッチフレーズスタイル */
+        .hero-catchphrase {
+            position: absolute;
+            bottom: 80px;
+            right: 60px;
+            z-index: 10;
+            text-align: right;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 0.3em;
+            animation: fadeInSlide 2s ease-out forwards;
+            animation-delay: 1s;
+            opacity: 0;
+        }
+
+        .hero-catchphrase-main {
+            display: block;
+            font-size: clamp(28px, 3.5vw, 42px);
+            font-weight: 200;
+            color: var(--warm-white);
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(200, 158, 87, 0.4);
+            margin-bottom: 1em;
+            position: relative;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(200, 158, 87, 0.9) 50%,
+                rgba(255, 255, 255, 0.8) 100%
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.8));
+        }
+
+        .hero-catchphrase-sub {
+            display: block;
+            font-size: clamp(36px, 4.5vw, 56px);
+            font-weight: 300;
+            color: var(--accent-gold);
+            text-shadow: 
+                3px 3px 6px rgba(0, 0, 0, 0.9),
+                0 0 40px rgba(200, 158, 87, 0.6),
+                0 0 60px rgba(200, 158, 87, 0.3);
+            position: relative;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        /* キャッチフレーズの装飾線 */
+        .hero-catchphrase::before {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                var(--accent-gold) 20%,
+                var(--accent-gold) 80%,
+                transparent 100%
+            );
+            animation: lineGlow 2s ease-in-out infinite;
+        }
+
+        /* アニメーション定義 */
+        @keyframes fadeInSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -30%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes fadeInUpRotate {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -30%) rotate(-5deg) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) rotate(-5deg) scale(1);
+            }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 
+                    3px 3px 6px rgba(0, 0, 0, 0.9),
+                    0 0 40px rgba(200, 158, 87, 0.6),
+                    0 0 60px rgba(200, 158, 87, 0.3);
+            }
+            50% {
+                text-shadow: 
+                    3px 3px 6px rgba(0, 0, 0, 0.9),
+                    0 0 50px rgba(200, 158, 87, 0.8),
+                    0 0 80px rgba(200, 158, 87, 0.5),
+                    0 0 100px rgba(200, 158, 87, 0.3);
+            }
+        }
+
+        @keyframes lineGlow {
+            0%, 100% {
+                opacity: 0.8;
+                box-shadow: 0 0 10px rgba(200, 158, 87, 0.5);
+            }
+            50% {
+                opacity: 1;
+                box-shadow: 0 0 20px rgba(200, 158, 87, 0.8);
+            }
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 1024px) {
+            .hero-catchphrase {
+                right: 40px;
+                bottom: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-catchphrase {
+                writing-mode: horizontal-tb;
+                text-orientation: mixed;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-5deg);
+                text-align: center;
+                right: auto;
+                bottom: auto;
+                width: 90%;
+                max-width: 400px;
+                letter-spacing: 0.1em;
+                animation: fadeInUpRotate 2s ease-out forwards;
+                animation-delay: 1s;
+            }
+
+            .hero-catchphrase-main {
+                font-size: clamp(24px, 6vw, 32px);
+                margin-bottom: 0.3em;
+                display: block;
+                text-align: center;
+            }
+
+            .hero-catchphrase-sub {
+                font-size: clamp(32px, 7vw, 42px);
+                display: block;
+                margin-left: 0;
+                text-align: center;
+            }
+
+            .hero-catchphrase::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-catchphrase {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-5deg);
+                text-align: center;
+                right: auto;
+                bottom: auto;
+                width: 85%;
+                max-width: 300px;
+                letter-spacing: 0.05em;
+                animation: fadeInUpRotate 2s ease-out forwards;
+                animation-delay: 1s;
+            }
+
+            .hero-catchphrase-main {
+                display: block;
+                margin-bottom: 0.2em;
+                font-size: clamp(22px, 5.5vw, 30px);
+            }
+
+            .hero-catchphrase-sub {
+                display: block;
+                margin-left: 0;
+                font-size: clamp(30px, 6.5vw, 40px);
+            }
         }
 
         /* セクション共通 */
@@ -5665,6 +5886,11 @@
             <span>CLOSE 22:00</span>
             <span>定休日 水曜日</span>
         </div>
+        <!-- 新しいキャッチフレーズ -->
+        <h1 class="hero-catchphrase">
+            <span class="hero-catchphrase-main">伝統の博多もつ鍋を</span>
+            <span class="hero-catchphrase-sub">楽しむ</span>
+        </h1>
     </section>
 
     <!-- パララックス背景 -->
