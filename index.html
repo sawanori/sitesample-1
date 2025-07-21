@@ -3892,7 +3892,7 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             opacity: 1;
-            transition: none; /* トランジションアニメーションを完全削除 */
+            transition: opacity 1s ease-in-out;
         }
         
         /* 暗めのオーバーレイで可読性向上 */
@@ -3956,7 +3956,7 @@
         .parallax-bg-wrapper.parallax-bg-2 {
             background-image: url('./images/DSC00406.jpg');
             opacity: 0;
-            transition: none; /* アニメーションなし */
+            transition: opacity 1s ease-in-out;
         }
         
         /* スマートフォン用背景画像2 */
@@ -6904,13 +6904,7 @@
             const introSection2 = document.querySelector('.intro-parallax-section.intro-parallax-2');
             
             function updateParallaxTransition() {
-                // スマートフォンではパララックス切り替えを無効化
-                if (window.innerWidth <= 768) {
-                    return;
-                }
-                
-                const scrollElement = window.innerWidth <= 768 ? document.querySelector('.scroll-container') : window;
-                const scrollTop = scrollElement === window ? window.pageYOffset : scrollElement.scrollTop;
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 
                 // こだわりセクションを基準に背景を切り替え
                 const craftSection = document.querySelector('#craft');
