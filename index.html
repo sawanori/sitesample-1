@@ -489,6 +489,27 @@
             position: relative;
         }
         
+        /* デスクトップ用テキスト */
+        .desktop-text {
+            display: inline;
+        }
+        
+        /* モバイル用テキスト */
+        .mobile-text {
+            display: none;
+            line-height: 1.2;
+        }
+        
+        /* モバイル時の表示切り替え */
+        @media (max-width: 768px) {
+            .desktop-text {
+                display: none;
+            }
+            .mobile-text {
+                display: inline;
+            }
+        }
+        
         .hero-logo {
             max-width: 400px;
             width: 90%;
@@ -5914,7 +5935,10 @@
         </div>
         <div class="hero-content">
             <img src="./images/log.png" alt="木村屋本店" class="hero-logo fade-up">
-            <h1 class="hero-title fade-up">博多もつ鍋専門店</h1>
+            <h1 class="hero-title fade-up">
+                <span class="desktop-text">博多もつ鍋専門店</span>
+                <span class="mobile-text">博多<br>もつ鍋<br>専門店</span>
+            </h1>
             <p class="hero-subtitle fade-up">110席の大箱で宴会を</p>
         </div>
         <div class="hero-info fade-up">
